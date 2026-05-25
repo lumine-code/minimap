@@ -19,36 +19,6 @@ Fork of [minimap](https://github.com/atom-minimap/minimap).
 
 To install `minimap-next` search for [minimap-next](https://web.pulsar-edit.dev/packages/minimap-next) in the Install pane of the Pulsar settings or run `ppm install minimap-next`. Alternatively, you can run `ppm install asiloisad/pulsar-minimap-next` to install a package directly from the GitHub repository.
 
-## Provided Service `minimap-next`
-
-Exposes the minimap API to other packages, allowing them to add decorations and interact with the minimap.
-
-In your `package.json`:
-
-```json
-{
-  "consumedServices": {
-    "minimap-next": {
-      "versions": { "1.0.0": "consumeMinimap" }
-    }
-  }
-}
-```
-
-In your main module:
-
-```javascript
-consumeMinimap(api) {
-  api.observeMinimaps((minimap) => {
-    const decoration = minimap.decorateMarker(marker, {
-      type: "line",
-      color: "#ff0000",
-      plugin: "my-plugin",
-    });
-  });
-}
-```
-
 ## Customization
 
 The style can be adjusted according to user preferences in the `styles.less` file:
@@ -89,6 +59,36 @@ atom-text-editor {
       display: block;
     }
   }
+}
+```
+
+## Provided Service `minimap-next`
+
+Exposes the minimap API to other packages, allowing them to add decorations and interact with the minimap.
+
+In your `package.json`:
+
+```json
+{
+  "consumedServices": {
+    "minimap-next": {
+      "versions": { "1.0.0": "consumeMinimap" }
+    }
+  }
+}
+```
+
+In your main module:
+
+```javascript
+consumeMinimap(api) {
+  api.observeMinimaps((minimap) => {
+    const decoration = minimap.decorateMarker(marker, {
+      type: "line",
+      color: "#ff0000",
+      plugin: "my-plugin",
+    });
+  });
 }
 ```
 
