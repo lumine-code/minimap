@@ -202,6 +202,80 @@ describe("minimap", () => {
     });
   });
 
+  describe("style changes", () => {
+    let styleSheets;
+
+    function addStyleSheet(source) {
+      const disposable = atom.styles.addStyleSheet(source);
+      styleSheets.push(disposable);
+      return disposable;
+    }
+
+    // The colors the minimap paints with are read from the DOM once and cached, by the drawing
+    // loop that is spied on here; seed the cache the way a draw does.
+    function readEditorColor() {
+      return mainModule.styleReader.retrieveStyleFromDom([".editor"], "color", editorElement);
+    }
+
+    beforeEach(async () => {
+      styleSheets = [];
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      readEditorColor();
+      spyOn(minimapElement, "requestForcedUpdate");
+    });
+
+    afterEach(() => {
+      for (const disposable of styleSheets) {
+        disposable.dispose();
+      }
+      document.documentElement.removeAttribute("ui-variant");
+    });
+
+    it("re-reads the colors in the same task as the style change", async () => {
+      // A theme switch attaches its stylesheets inside a View Transition and the window cross-fades
+      // from there, so a minimap that waits on a timer only paints its new colors once the fade is
+      // over. The update is coalesced on a microtask instead, not debounced.
+      addStyleSheet("atom-text-editor .editor { color: rgb(12, 34, 56); }");
+
+      await null;
+      expect(minimapElement.requestForcedUpdate).toHaveBeenCalled();
+      expect(readEditorColor()).toBe("rgb(12, 34, 56)");
+    });
+
+    it("redraws once for a burst of style changes", async () => {
+      addStyleSheet("atom-text-editor .editor { color: rgb(12, 34, 56); }");
+      addStyleSheet("atom-text-editor .editor { color: rgb(65, 43, 21); }");
+
+      await null;
+      expect(minimapElement.requestForcedUpdate.calls.count()).toBe(1);
+      expect(readEditorColor()).toBe("rgb(65, 43, 21)");
+    });
+
+    it("leaves the minimaps alone when the new styles move none of its colors", async () => {
+      // These subscriptions fire for every stylesheet attached anywhere in the window.
+      addStyleSheet("atom-text-editor .some-other-package { color: rgb(12, 34, 56); }");
+
+      await null;
+      expect(minimapElement.requestForcedUpdate).not.toHaveBeenCalled();
+    });
+
+    it("redraws for a restyle that changes no stylesheet at all", async () => {
+      // A theme variant can be nothing more than an attribute on the document root: it is applied
+      // through `atom.themes.updateAppearance`, which adds and removes no style element and only
+      // reports itself as a change of the active themes.
+      addStyleSheet('[ui-variant="pure"] atom-text-editor .editor { color: rgb(12, 34, 56); }');
+      await null;
+      expect(minimapElement.requestForcedUpdate).not.toHaveBeenCalled();
+
+      await atom.themes.updateAppearance(() =>
+        document.documentElement.setAttribute("ui-variant", "pure"),
+      );
+
+      expect(minimapElement.requestForcedUpdate).toHaveBeenCalled();
+      expect(readEditorColor()).toBe("rgb(12, 34, 56)");
+    });
+  });
+
   describe("configuration", () => {
     it("moves the minimap to the left when displayMinimapOnLeft is enabled", () => {
       atom.config.set("minimap.displayMinimapOnLeft", true);
