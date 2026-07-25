@@ -7,8 +7,12 @@
     "url": "https://github.com/lumine-code/minimap/issues"
   },
   "keywords": [
-    "minimap",
-    "overview"
+    "overview",
+    "preview",
+    "sidebar",
+    "thumbnail",
+    "canvas",
+    "decoration"
   ],
   "version": "1.0.0",
   "license": "MIT",
