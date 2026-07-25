@@ -25,6 +25,15 @@ describe("minimap", () => {
     return component.refs.clientContainer.offsetWidth;
   }
 
+  // An editor re-arms its resize observer a tick after each measurement, and re-observing delivers
+  // one callback: specs that check whether a measurement is refreshed at all have to let that
+  // settle first, or the pending callback refreshes it for them.
+  async function settle() {
+    for (let i = 0; i < 3; i++) {
+      await nextFrame();
+    }
+  }
+
   beforeEach(async () => {
     workspaceElement = atom.views.getView(atom.workspace);
     workspaceElement.style.width = "800px";
@@ -97,6 +106,27 @@ describe("minimap", () => {
       expect(findMinimapElement()).not.toBeNull();
       expect(editorElement.getAttribute("with-minimap")).toBe("right");
     });
+
+    it("makes the editors measure around a minimap that comes back", async () => {
+      const { component } = editorElement;
+      atom.commands.dispatch(workspaceElement, "minimap:toggle");
+      await until(() => !findMinimapElement(), "the minimap element to detach");
+      await until(
+        () => component.getClientContainerWidth() === clientContainerWidth(component),
+        "the editor to settle on its full width",
+      );
+      const fullWidth = component.getClientContainerWidth();
+      await settle();
+
+      atom.commands.dispatch(workspaceElement, "minimap:toggle");
+      await until(() => findMinimapElement(), "the minimap element to re-attach");
+
+      await until(
+        () => component.getClientContainerWidth() < fullWidth,
+        "the editor to re-measure around the minimap",
+      );
+      expect(component.getClientContainerWidth()).toBe(clientContainerWidth(component));
+    });
   });
 
   describe("deactivation", () => {
@@ -106,9 +136,9 @@ describe("minimap", () => {
     });
 
     it("makes the editors re-measure the width the minimap gave back", async () => {
-      // Removing the minimap leaves the `atom-text-editor` element the same size, so nothing the
-      // editor observes reports the width its flex sibling gave back: without an explicit nudge the
-      // component keeps rendering at the narrower width until the pane is resized.
+      // The minimap only ever resizes the client container the editor measures, never the
+      // `atom-text-editor` element itself, so an editor that does not pick the width back up keeps
+      // rendering short of its right edge until the pane is resized.
       const { component } = editorElement;
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       await until(
@@ -117,19 +147,14 @@ describe("minimap", () => {
       );
       const widthWithMinimap = component.getClientContainerWidth();
       expect(widthWithMinimap).toBeLessThan(editorElement.offsetWidth);
-
-      // The component re-arms its resize observer a tick after each measurement, and re-observing
-      // delivers one callback: let that settle, or it would refresh the width for us.
-      for (let i = 0; i < 3; i++) {
-        await nextFrame();
-      }
+      await settle();
 
       await atom.packages.deactivatePackage("minimap");
-      for (let i = 0; i < 2; i++) {
-        await nextFrame();
-      }
 
-      expect(component.getClientContainerWidth()).toBeGreaterThan(widthWithMinimap);
+      await until(
+        () => component.getClientContainerWidth() > widthWithMinimap,
+        "the editor to re-measure without the minimap",
+      );
       expect(component.getClientContainerWidth()).toBe(clientContainerWidth(component));
     });
   });
