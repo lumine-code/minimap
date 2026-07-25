@@ -1,96 +1,50 @@
-# minimap-next
+# minimap
 
 A preview of the full source code.
 
-Fork of [minimap](https://github.com/atom-minimap/minimap).
-
 ## Features
 
-- **Canvas rendering**: Three-layer canvas (back decorations, tokens, front decorations) with incremental redraws — only changed row ranges are repainted.
-- **Syntax highlighting**: Token colors are resolved directly from the active theme via computed DOM styles and cached per scope, so the minimap matches the editor exactly.
-- **Scroll past end**: The minimap proportionally tracks the full editor scroll range, including the scroll-past-end zone.
-- **Decoration API**: Uses the same marker-based API as `TextEditor` — supports `line`, `gutter`, `highlight-under`, `highlight-over`, `highlight-outline`, and `background-custom`/`foreground-custom` types.
-- **Plugin system**: Third-party packages can consume the `minimap-next` service to add their own decoration layers.
-- **Quick settings**: Toggle plugins and flip the minimap position via a dropdown on the minimap itself.
-- **Stand-alone mode**: Embed a minimap preview outside of a text editor for custom UI panels.
-- **Independent scroll**: Optionally decouple mouse-wheel scrolling on the minimap from the editor.
+- **Canvas rendering**: three-layer canvas (back decorations, tokens, front decorations) with incremental redraws — only changed row ranges are repainted.
+- **Syntax highlighting**: token colors are resolved directly from the active theme via computed DOM styles and cached per scope, so the minimap matches the editor exactly.
+- **Scroll past end**: the minimap proportionally tracks the full editor scroll range, including the scroll-past-end zone.
+- **Decoration API**: uses the same marker-based API as the text editor — supports `line`, `gutter`, `highlight-under`, `highlight-over`, `highlight-outline`, and `background-custom`/`foreground-custom` types.
+- **Plugin system**: third-party packages can consume the `minimap` service to add their own decoration layers.
+- **Quick settings**: toggle plugins and flip the minimap position via a dropdown on the minimap itself.
+- **Stand-alone mode**: embed a minimap preview outside of a text editor for custom UI panels.
+- **Independent scroll**: optionally decouple mouse-wheel scrolling on the minimap from the editor.
 
 ## Installation
 
-To install `minimap-next` search for [minimap-next](https://web.pulsar-edit.dev/packages/minimap-next) in the Install pane of the Pulsar settings or run `ppm install minimap-next`. Alternatively, you can run `ppm install asiloisad/pulsar-minimap-next` to install a package directly from the GitHub repository.
+To install `minimap` search for *minimap* in the Install pane of the Lumine settings or run `lumine --install lumine-code/minimap`.
+
+## Commands
+
+Commands available in `atom-workspace`:
+
+- `minimap:toggle`: show or hide the minimap in all text editors,
+- `minimap:toggle-<plugin>`: activate or deactivate a registered minimap plugin (one command is registered per plugin).
 
 ## Customization
 
-The style can be adjusted according to user preferences in the `styles.less` file:
-
-- e.g. hide the default editor scrollbar:
+The appearance can be adjusted in the user stylesheet, e.g. hide the editor scrollbar next to the minimap, tint the minimap background, and recolor the visible-area overlay:
 
 ```less
 atom-text-editor[with-minimap] .vertical-scrollbar {
   display: none;
 }
-```
 
-- e.g. change the minimap background:
-
-```less
 atom-text-editor atom-text-editor-minimap {
-  background: green;
-}
-```
+  background: var(--app-background-color);
 
-- e.g. change the visible area color:
-
-```less
-atom-text-editor atom-text-editor-minimap .minimap-visible-area::after {
-  background-color: rgba(0, 255, 0, 0.5);
-}
-```
-
-- e.g. show minimap only in the focused pane:
-
-```less
-atom-text-editor {
-  atom-text-editor-minimap {
-    display: none;
-  }
-  &.is-focused {
-    atom-text-editor-minimap {
-      display: block;
-    }
+  .minimap-visible-area::after {
+    background-color: rgba(127, 127, 127, 0.35);
   }
 }
 ```
 
-## Provided Service `minimap-next`
+## Services
 
-Exposes the minimap API to other packages, allowing them to add decorations and interact with the minimap.
-
-In your `package.json`:
-
-```json
-{
-  "consumedServices": {
-    "minimap-next": {
-      "versions": { "1.0.0": "consumeMinimap" }
-    }
-  }
-}
-```
-
-In your main module:
-
-```javascript
-consumeMinimap(api) {
-  api.observeMinimaps((minimap) => {
-    const decoration = minimap.decorateMarker(marker, {
-      type: "line",
-      color: "#ff0000",
-      plugin: "my-plugin",
-    });
-  });
-}
-```
+- **minimap** (`1.0.0`): provided to expose the minimap API — other packages can observe minimaps, decorate markers, and register minimap plugins.
 
 ## Contributing
 

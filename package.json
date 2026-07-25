@@ -1,149 +1,150 @@
 {
-  "name": "minimap-next",
-  "version": "1.1.0",
+  "name": "minimap",
+  "author": "lumine-code",
   "description": "A preview of the full source code",
-  "repository": "https://github.com/asiloisad/pulsar-minimap-next",
+  "repository": "https://github.com/lumine-code/minimap",
+  "bugs": {
+    "url": "https://github.com/lumine-code/minimap/issues"
+  },
+  "keywords": [
+    "minimap",
+    "overview"
+  ],
+  "version": "2.0.0",
   "license": "MIT",
+  "engines": {
+    "atom": ">=1.100.0 <2.0.0"
+  },
   "main": "./lib/main.js",
+  "scripts": {
+    "test": "cd ../lumine && npm run test:only -- ../minimap/spec",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
   "configSchema": {
     "plugins": {
       "type": "object",
       "properties": {}
     },
     "autoToggle": {
-      "order": 1,
       "title": "Show Minimap On Startup",
-      "description": "Automatically show the minimap when Pulsar starts.",
+      "description": "Automatically show the minimap when Lumine starts.",
       "type": "boolean",
       "default": true
     },
     "displayMinimapOnLeft": {
-      "order": 2,
       "title": "Display Minimap On Left",
       "description": "When enabled, the minimap is displayed on the left side of the editor instead of the right.",
       "type": "boolean",
       "default": false
     },
     "displayCodeHighlights": {
-      "order": 3,
       "title": "Display Code Highlights",
       "description": "Render syntax-colored tokens in the minimap. Disabling this draws plain text and may improve performance.",
       "type": "boolean",
       "default": true
     },
     "displayPluginsControls": {
-      "order": 4,
       "title": "Display Plugins Controls",
       "description": "Show the quick-settings button that lets you toggle minimap plugins. Requires a restart to take effect.",
       "type": "boolean",
       "default": true
     },
     "adjustMinimapWidthToSoftWrap": {
-      "order": 6,
       "title": "Adjust Minimap Width To Soft Wrap",
       "description": "When soft wrap and soft wrap at preferred line length are both enabled, cap the minimap width to match the preferred line length.",
       "type": "boolean",
       "default": true
     },
     "charWidth": {
-      "order": 9,
       "title": "Character Width",
       "description": "Width of each character block in the minimap, in pixels.",
       "type": "number",
-      "default": 1,
-      "minimum": 0.5
+      "minimum": 0.5,
+      "default": 1
     },
     "charHeight": {
-      "order": 10,
       "title": "Character Height",
       "description": "Height of each character block in the minimap, in pixels.",
       "type": "number",
-      "default": 2,
-      "minimum": 0.5
+      "minimum": 0.5,
+      "default": 2
     },
     "interline": {
-      "order": 11,
       "title": "Interline Spacing",
       "description": "Extra vertical space between lines in the minimap, in pixels.",
       "type": "number",
-      "default": 1,
-      "minimum": 0
+      "minimum": 0,
+      "default": 1
     },
     "textOpacity": {
-      "order": 12,
       "title": "Text Opacity",
       "description": "Opacity of the rendered text in the minimap. Lower values make the code less prominent.",
       "type": "number",
-      "default": 0.6,
       "minimum": 0,
-      "maximum": 1
+      "maximum": 1,
+      "default": 0.6
     },
     "independentMinimapScroll": {
-      "order": 14,
       "title": "Independent Minimap Scroll On Mouse Wheel",
       "description": "When enabled, scrolling the mouse wheel over the minimap moves the minimap independently without scrolling the editor. The minimap still syncs back whenever the editor itself is scrolled.",
       "type": "boolean",
       "default": false
     },
     "scrollSensitivity": {
-      "order": 15,
       "title": "Independent Scroll Sensitivity",
       "description": "Scroll speed multiplier used when independent minimap scroll is enabled.",
       "type": "number",
       "default": 0.5
     },
     "redrawDelay": {
-      "order": 20,
       "title": "Redraw Delay (ms)",
       "description": "Minimum time in milliseconds between minimap redraws triggered by text changes. Higher values improve responsiveness on large files; 0 redraws immediately on every change.",
       "type": "number",
-      "default": 300,
       "minimum": 0,
-      "maximum": 2000
+      "maximum": 2000,
+      "default": 300
     },
     "devicePixelRatioRounding": {
-      "order": 21,
       "title": "Device Pixel Ratio Rounding",
       "description": "Round the device pixel ratio used for canvas rendering. Disable if you see blurry or misaligned pixels on fractional-DPI displays.",
       "type": "boolean",
       "default": true
     },
     "useHardwareAcceleration": {
-      "order": 22,
       "title": "Use Hardware Acceleration",
       "description": "Use CSS transforms for positioning, which enables GPU compositing and reduces repaints.",
       "type": "boolean",
       "default": true
     },
     "maxTokensInOneLine": {
-      "order": 25,
       "title": "Max Tokens Per Line",
       "description": "Maximum number of syntax tokens rendered per line. Reducing this can improve performance on files with very long lines.",
       "type": "integer",
       "default": 160
     }
   },
-  "dependencies": {},
-  "engines": {
-    "atom": ">=1.52.0",
-    "electron": ">=6.0.0"
-  },
-  "keywords": [
-    "minimap",
-    "overview"
-  ],
   "activationHooks": [
     "core:loaded-shell-environment"
   ],
   "providedServices": {
-    "minimap-next": {
+    "minimap": {
       "description": "Exposes the minimap API to other packages",
       "versions": {
-        "1.0.0": "provideMinimapServiceV1"
+        "1.0.0": "provideMinimap"
       }
     }
   },
   "viewProviders": [
     "minimapViewProvider"
-  ]
+  ],
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^18.2.2",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.6"
+  }
 }
