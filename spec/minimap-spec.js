@@ -21,6 +21,10 @@ describe("minimap", () => {
     return editorElement.querySelector("atom-text-editor-minimap");
   }
 
+  function clientContainerWidth(component) {
+    return component.refs.clientContainer.offsetWidth;
+  }
+
   beforeEach(async () => {
     workspaceElement = atom.views.getView(atom.workspace);
     workspaceElement.style.width = "800px";
@@ -99,6 +103,34 @@ describe("minimap", () => {
     it("removes all minimap elements", async () => {
       await atom.packages.deactivatePackage("minimap");
       expect(findMinimapElement()).toBeNull();
+    });
+
+    it("makes the editors re-measure the width the minimap gave back", async () => {
+      // Removing the minimap leaves the `atom-text-editor` element the same size, so nothing the
+      // editor observes reports the width its flex sibling gave back: without an explicit nudge the
+      // component keeps rendering at the narrower width until the pane is resized.
+      const { component } = editorElement;
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await until(
+        () => component.getClientContainerWidth() === clientContainerWidth(component),
+        "the editor to settle on the width left by the minimap",
+      );
+      const widthWithMinimap = component.getClientContainerWidth();
+      expect(widthWithMinimap).toBeLessThan(editorElement.offsetWidth);
+
+      // The component re-arms its resize observer a tick after each measurement, and re-observing
+      // delivers one callback: let that settle, or it would refresh the width for us.
+      for (let i = 0; i < 3; i++) {
+        await nextFrame();
+      }
+
+      await atom.packages.deactivatePackage("minimap");
+      for (let i = 0; i < 2; i++) {
+        await nextFrame();
+      }
+
+      expect(component.getClientContainerWidth()).toBeGreaterThan(widthWithMinimap);
+      expect(component.getClientContainerWidth()).toBe(clientContainerWidth(component));
     });
   });
 
