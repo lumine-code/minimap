@@ -15,7 +15,7 @@ A preview of the full source code.
 
 ## Installation
 
-To install `minimap` search for *minimap* in the Install pane of the Lumine settings or run `lumine --install lumine-code/minimap`.
+To install `minimap` search for _minimap_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/minimap`.
 
 ## Commands
 

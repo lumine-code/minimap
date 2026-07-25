@@ -30,6 +30,9 @@ module.exports = [
     rules: {
       "no-unused-vars": ["error", { varsIgnorePattern: "^_", argsIgnorePattern: "^_" }],
       "no-empty": ["error", { allowEmptyCatch: true }],
+      // localStorage is used through `window.localStorage`, i.e. the browser API
+      // of the Electron renderer, not the experimental Node builtin.
+      "n/no-unsupported-features/node-builtins": ["error", { ignores: ["localStorage"] }],
       "n/no-missing-import": ["error", { allowModules: runtimeModules }],
       "n/no-unpublished-import": ["error", { allowModules: runtimeModules }],
       "n/no-extraneous-import": ["error", { allowModules: runtimeModules }],
