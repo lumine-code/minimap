@@ -217,11 +217,38 @@ describe("minimap", () => {
       return mainModule.styleReader.retrieveStyleFromDom([".editor"], "color", editorElement);
     }
 
+    function tokensLayerPixels() {
+      const { canvas } = minimapElement.tokensLayer;
+      return canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+    }
+
+    function tokensLayerHasInk() {
+      const data = tokensLayerPixels();
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] > 0) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Tokens are drawn as filled rectangles, so their color lands on the canvas exactly. Only the
+    // edges are blended, and an interior pixel is enough to tell which palette painted them.
+    function tokensLayerHasColor(r, g, b) {
+      const data = tokensLayerPixels();
+      for (let i = 0; i < data.length; i += 4) {
+        if (data[i] === r && data[i + 1] === g && data[i + 2] === b && data[i + 3] > 0) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     beforeEach(async () => {
       styleSheets = [];
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       readEditorColor();
-      spyOn(minimapElement, "requestForcedUpdate");
+      spyOn(minimapElement, "forceUpdateNow");
     });
 
     afterEach(() => {
@@ -238,8 +265,28 @@ describe("minimap", () => {
       addStyleSheet("atom-text-editor .editor { color: rgb(12, 34, 56); }");
 
       await null;
-      expect(minimapElement.requestForcedUpdate).toHaveBeenCalled();
+      expect(minimapElement.forceUpdateNow).toHaveBeenCalled();
       expect(readEditorColor()).toBe("rgb(12, 34, 56)");
+    });
+
+    it("repaints the canvas in the same task, without waiting for a frame", async () => {
+      // The other expectations here stop at the call. This one follows it through to the pixels,
+      // which is where the frame that `requestAnimationFrame` used to cost would show up: the
+      // transition has snapshotted the window by then, and the minimap fades in holding the old
+      // palette.
+      // With the code highlights off the tokens are drawn in the editor's own color, which is the
+      // one this block restyles; with them on they take their color from each token's own scopes.
+      // At full opacity that color reaches the canvas unpremultiplied, so it can be matched exactly.
+      atom.config.set("minimap.displayCodeHighlights", false);
+      atom.config.set("minimap.textOpacity", 1);
+      minimapElement.forceUpdateNow.and.callThrough();
+      await until(() => tokensLayerHasInk(), "the minimap to paint its tokens");
+      expect(tokensLayerHasColor(12, 34, 56)).toBe(false);
+
+      addStyleSheet("atom-text-editor .editor { color: rgb(12, 34, 56); }");
+      await null;
+
+      expect(tokensLayerHasColor(12, 34, 56)).toBe(true);
     });
 
     it("redraws once for a burst of style changes", async () => {
@@ -247,7 +294,7 @@ describe("minimap", () => {
       addStyleSheet("atom-text-editor .editor { color: rgb(65, 43, 21); }");
 
       await null;
-      expect(minimapElement.requestForcedUpdate.calls.count()).toBe(1);
+      expect(minimapElement.forceUpdateNow.calls.count()).toBe(1);
       expect(readEditorColor()).toBe("rgb(65, 43, 21)");
     });
 
@@ -256,7 +303,7 @@ describe("minimap", () => {
       addStyleSheet("atom-text-editor .some-other-package { color: rgb(12, 34, 56); }");
 
       await null;
-      expect(minimapElement.requestForcedUpdate).not.toHaveBeenCalled();
+      expect(minimapElement.forceUpdateNow).not.toHaveBeenCalled();
     });
 
     it("redraws for a restyle that changes no stylesheet at all", async () => {
@@ -265,13 +312,13 @@ describe("minimap", () => {
       // reports itself as a change of the active themes.
       addStyleSheet('[ui-variant="pure"] atom-text-editor .editor { color: rgb(12, 34, 56); }');
       await null;
-      expect(minimapElement.requestForcedUpdate).not.toHaveBeenCalled();
+      expect(minimapElement.forceUpdateNow).not.toHaveBeenCalled();
 
       await atom.themes.updateAppearance(() =>
         document.documentElement.setAttribute("ui-variant", "pure"),
       );
 
-      expect(minimapElement.requestForcedUpdate).toHaveBeenCalled();
+      expect(minimapElement.forceUpdateNow).toHaveBeenCalled();
       expect(readEditorColor()).toBe("rgb(12, 34, 56)");
     });
   });
