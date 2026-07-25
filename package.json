@@ -1,7 +1,7 @@
 {
   "name": "minimap",
   "author": "lumine-code",
-  "description": "A preview of the full source code",
+  "description": "A preview of the full source code.",
   "repository": "https://github.com/lumine-code/minimap",
   "bugs": {
     "url": "https://github.com/lumine-code/minimap/issues"
