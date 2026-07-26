@@ -44,7 +44,7 @@ atom-text-editor atom-text-editor-minimap {
 
 ## Services
 
-- **minimap** (`1.0.0`): provided to expose the minimap API — other packages can observe minimaps, decorate markers, and register minimap plugins.
+- **[minimap](docs/minimap.md)** (`1.0.0`): provided to expose the minimap API — other packages can observe minimaps, decorate markers, and register minimap plugins.
 
 ## Contributing
 
