@@ -8,7 +8,7 @@ A preview of the full source code.
 - **Syntax highlighting**: token colors are resolved directly from the active theme via computed DOM styles and cached per scope, so the minimap matches the editor exactly.
 - **Scroll past end**: the minimap proportionally tracks the full editor scroll range, including the scroll-past-end zone.
 - **Marker layers**: git changes, linter messages, search hits and more are drawn over the code by packages providing the `marker.layer` service — the same layers the scrollbar strip draws, computed once.
-- **Quick settings**: switch marker layers on and off, toggle code highlights and flip the minimap position via a dropdown on the minimap itself.
+- **Layer picker**: switch marker layers and code highlights on and off, for this map alone.
 - **Independent scroll**: optionally decouple mouse-wheel scrolling on the minimap from the editor.
 
 ## Installation
@@ -19,7 +19,8 @@ To install `minimap` search for _minimap_ in the Install pane of the Lumine sett
 
 Commands available in `atom-workspace`:
 
-- `minimap:toggle`: show or hide the minimap in all text editors.
+- `minimap:toggle`: show or hide the minimap in all text editors,
+- `minimap:toggle-layers`: open a list to switch the drawn layers on and off.
 
 ## Customization
 

@@ -45,15 +45,9 @@
       "type": "boolean",
       "default": true
     },
-    "displayQuickSettings": {
-      "title": "Display Quick Settings",
-      "description": "Show the quick-settings button on the minimap. Requires a restart to take effect.",
-      "type": "boolean",
-      "default": true
-    },
     "disabledLayers": {
       "title": "Disabled Layers",
-      "description": "Names of the marker layers this map does not draw. The scrollbar strip keeps its own list.",
+      "description": "Names of the marker layers this map does not draw. The layers that paint a wide translucent band start here: beside a scrollbar they are a hint next to the code, over the code they are a wash on top of it. The scrollbar strip keeps its own list.",
       "type": "array",
       "items": {
         "type": "string"

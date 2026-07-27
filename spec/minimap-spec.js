@@ -500,21 +500,4 @@ describe("minimap", () => {
       expect(atom.config.get("scrollmap.disabledLayers")).not.toContain("speclayer");
     });
   });
-
-  describe("quick settings", () => {
-    it("opens and closes the quick settings dropdown", async () => {
-      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
-      expect(minimapElement.openQuickSettings).toBeDefined();
-
-      minimapElement.openQuickSettings.dispatchEvent(
-        new MouseEvent("mousedown", { bubbles: true }),
-      );
-
-      const quickSettings = workspaceElement.querySelector("minimap-quick-settings");
-      expect(quickSettings).not.toBeNull();
-
-      atom.commands.dispatch(quickSettings, "core:cancel");
-      expect(workspaceElement.querySelector("minimap-quick-settings")).toBeNull();
-    });
-  });
 });

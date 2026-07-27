@@ -111,68 +111,6 @@ atom-text-editor {
         background-color: rgba(127, 127, 127, 0.2);
       }
     }
-
-    .minimap-controls {
-      contain: size layout paint style;
-      position: relative;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .open-minimap-quick-settings {
-      contain: size layout paint style;
-      opacity: 0;
-      position: absolute;
-      z-index: 1;
-      cursor: pointer;
-      pointer-events: auto;
-      color: var(--text-color);
-      font-size: 20px;
-      text-align: center;
-      line-height: 24px;
-      width: 24px;
-      height: 24px;
-      display: block;
-      right: 8px;
-      transition: opacity 0.4s;
-
-      &::before {
-        contain: size layout paint style;
-        content: "\f02f";
-        font-family: "Octicons Regular";
-      }
-    }
-
-    &:hover .open-minimap-quick-settings {
-      contain: size layout paint style;
-      opacity: 1;
-      transition: opacity 0.1s;
-    }
-  }
-}
-
-minimap-quick-settings {
-  contain: layout paint style;
-  position: absolute !important;
-  z-index: 5;
-
-  .hidden-input {
-    contain: size layout paint style;
-    position: absolute;
-    width: 0;
-    height: 0;
-    background: transparent;
-    border: none;
-  }
-
-  .btn-group {
-    contain: layout paint style;
-    width: 100%;
-
-    .btn {
-      contain: layout paint style;
-      width: 50%;
-    }
   }
 }
 
