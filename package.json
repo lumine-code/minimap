@@ -27,10 +27,6 @@
     "format:check": "prettier --check ."
   },
   "configSchema": {
-    "plugins": {
-      "type": "object",
-      "properties": {}
-    },
     "autoToggle": {
       "title": "Show Minimap On Startup",
       "description": "Automatically show the minimap when Lumine starts.",
@@ -49,9 +45,9 @@
       "type": "boolean",
       "default": true
     },
-    "displayPluginsControls": {
-      "title": "Display Plugins Controls",
-      "description": "Show the quick-settings button that lets you toggle minimap plugins. Requires a restart to take effect.",
+    "displayQuickSettings": {
+      "title": "Display Quick Settings",
+      "description": "Show the quick-settings button on the minimap. Requires a restart to take effect.",
       "type": "boolean",
       "default": true
     },
@@ -132,14 +128,6 @@
   "activationHooks": [
     "core:loaded-shell-environment"
   ],
-  "providedServices": {
-    "minimap": {
-      "description": "Exposes the minimap API to other packages",
-      "versions": {
-        "1.0.0": "provideMinimap"
-      }
-    }
-  },
   "viewProviders": [
     "minimapViewProvider"
   ],

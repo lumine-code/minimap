@@ -7,10 +7,7 @@ A preview of the full source code.
 - **Canvas rendering**: three-layer canvas (back decorations, tokens, front decorations) with incremental redraws — only changed row ranges are repainted.
 - **Syntax highlighting**: token colors are resolved directly from the active theme via computed DOM styles and cached per scope, so the minimap matches the editor exactly.
 - **Scroll past end**: the minimap proportionally tracks the full editor scroll range, including the scroll-past-end zone.
-- **Decoration API**: uses the same marker-based API as the text editor — supports `line`, `gutter`, `highlight-under`, `highlight-over`, `highlight-outline`, and `background-custom`/`foreground-custom` types.
-- **Plugin system**: third-party packages can consume the `minimap` service to add their own decoration layers.
-- **Quick settings**: toggle plugins and flip the minimap position via a dropdown on the minimap itself.
-- **Stand-alone mode**: embed a minimap preview outside of a text editor for custom UI panels.
+- **Quick settings**: toggle code highlights and flip the minimap position via a dropdown on the minimap itself.
 - **Independent scroll**: optionally decouple mouse-wheel scrolling on the minimap from the editor.
 
 ## Installation
@@ -21,8 +18,7 @@ To install `minimap` search for _minimap_ in the Install pane of the Lumine sett
 
 Commands available in `atom-workspace`:
 
-- `minimap:toggle`: show or hide the minimap in all text editors,
-- `minimap:toggle-<plugin>`: activate or deactivate a registered minimap plugin (one command is registered per plugin).
+- `minimap:toggle`: show or hide the minimap in all text editors.
 
 ## Customization
 
@@ -41,10 +37,6 @@ atom-text-editor atom-text-editor-minimap {
   }
 }
 ```
-
-## Services
-
-- **[minimap](docs/minimap.md)** (`1.0.0`): provided to expose the minimap API — other packages can observe minimaps, decorate markers, and register minimap plugins.
 
 ## Contributing
 
