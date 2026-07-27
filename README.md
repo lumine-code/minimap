@@ -7,7 +7,7 @@ A preview of the full source code.
 - **Canvas rendering**: incremental redraws — only the row ranges that changed are repainted.
 - **Syntax highlighting**: token colors are resolved directly from the active theme via computed DOM styles and cached per scope, so the minimap matches the editor exactly.
 - **Scroll past end**: the minimap proportionally tracks the full editor scroll range, including the scroll-past-end zone.
-- **Marker layers**: git changes, linter messages, search hits and more are drawn over the code by packages providing the `marker.layer` service — the same layers the scrollbar strip draws, computed once.
+- **Marker layers**: git changes, linter messages, search hits and more are drawn over the code — the same layers the scrollbar strip draws, computed once by the `marker` package and read here through its `marker.registry` service.
 - **Layer picker**: switch marker layers and code highlights on and off, for this map alone.
 - **Independent scroll**: optionally decouple mouse-wheel scrolling on the minimap from the editor.
 
@@ -49,7 +49,7 @@ too wide here is a change to `.minimap-markers .marker`, not to the layer packag
 
 ## Services
 
-- **[marker.layer](https://lumine-code.github.io/docs.html#services/marker.layer)** (`^1.0.0`): consumed to let other packages register marker layers drawn on the minimap.
+- **[marker.registry](https://lumine-code.github.io/docs.html#services/marker.registry)** (`^1.0.0`): consumed to read every editor's computed marker layers and the toolkit that draws them.
 
 ## Contributing
 

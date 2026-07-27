@@ -155,14 +155,10 @@
     "prettier": "^3.9.6"
   },
   "consumedServices": {
-    "marker.layer": {
+    "marker.registry": {
       "versions": {
-        "^1.0.0": "consumeMarkerLayer"
+        "^1.0.0": "consumeMarkerRegistry"
       }
     }
-  },
-  "dependencies": {
-    "@lumine-code/marker-host": "file:../../pkg_nodejs/marker-host",
-    "@lumine-code/select-list": "https://github.com/lumine-code/select-list.git#a201dae6a0ea6954cb9a905be4a718af697d9f78"
   }
 }

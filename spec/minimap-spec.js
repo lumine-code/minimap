@@ -1,7 +1,8 @@
+const path = require("path");
 const { styleReader } = require("../lib/style-reader");
 
 describe("minimap", () => {
-  let workspaceElement, editor, editorElement, mainModule, minimap, minimapElement;
+  let workspaceElement, editor, editorElement, mainModule, markerMain, minimap, minimapElement;
 
   function nextFrame() {
     return new Promise((resolve) => requestAnimationFrame(resolve));
@@ -50,6 +51,13 @@ describe("minimap", () => {
     // Redraw immediately on buffer changes instead of debouncing through the
     // frozen `setTimeout`.
     atom.config.set("minimap.redrawDelay", 0);
+
+    // The map draws layers the marker hub computes, so the specs run against
+    // the real hub package -- the sibling repo in the workspace and in CI alike.
+    const markerPack = await atom.packages.activatePackage(
+      path.join(__dirname, "..", "..", "marker"),
+    );
+    markerMain = markerPack.mainModule;
 
     // The package defers its activation to the shell-environment hook.
     const activation = atom.packages.activatePackage("minimap");
@@ -389,7 +397,7 @@ describe("minimap", () => {
     }
 
     async function registerLayer(props) {
-      layerDisposable = mainModule.consumeMarkerLayer(props);
+      layerDisposable = markerMain.consumeMarkerLayer(props);
       // The layer's own throttle, then the frame the element redraws on.
       advanceClock(30);
       await until(
@@ -472,7 +480,7 @@ describe("minimap", () => {
 
   describe("minimap:toggle-layers", () => {
     it("lists the registered layers and code highlights, and toggles them", async () => {
-      const disposable = mainModule.consumeMarkerLayer({
+      const disposable = markerMain.consumeMarkerLayer({
         name: "speclayer",
         description: "Spec layer",
         getItems: () => [],
