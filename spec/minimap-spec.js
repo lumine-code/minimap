@@ -19,6 +19,11 @@ describe("minimap", () => {
     throw new Error(`Timed out waiting for ${description}`);
   }
 
+  async function untilPresent(get, description = "an element") {
+    await until(() => get(), description);
+    return get();
+  }
+
   function findMinimapElement() {
     return editorElement.querySelector("atom-text-editor-minimap");
   }
@@ -462,6 +467,37 @@ describe("minimap", () => {
       layerDisposable.dispose();
       layerDisposable = null;
       await until(() => markerCanvasRows().length === 0, "the markers to be cleared");
+    });
+  });
+
+  describe("minimap:toggle-layers", () => {
+    it("lists the registered layers and code highlights, and toggles them", async () => {
+      const disposable = mainModule.consumeMarkerLayer({
+        name: "speclayer",
+        description: "Spec layer",
+        getItems: () => [],
+      });
+
+      atom.commands.dispatch(workspaceElement, "minimap:toggle-layers");
+      const view = await untilPresent(() => document.querySelector(".minimap-view"));
+      await until(() => view.textContent.includes("speclayer"), "the layer to be listed");
+      // Not a provided layer, but the same question, so the same list.
+      expect(view.textContent).toContain("code-highlights");
+
+      atom.commands.dispatch(workspaceElement, "minimap:toggle-layers");
+      disposable.dispose();
+    });
+
+    // Each map keeps its own list: switching a layer off here leaves the
+    // scrollbar strip alone.
+    it("writes only the minimap's own disabled list", () => {
+      atom.config.set("minimap.disabledLayers", []);
+      atom.config.set("scrollmap.disabledLayers", []);
+
+      mainModule.markerLayers.picker().toggle({ name: "speclayer" });
+
+      expect(atom.config.get("minimap.disabledLayers")).toContain("speclayer");
+      expect(atom.config.get("scrollmap.disabledLayers")).not.toContain("speclayer");
     });
   });
 

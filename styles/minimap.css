@@ -16,8 +16,7 @@ atom-text-editor[with-minimap] {
    this means the css properties of the minimap does not affect other parts of the editor
    https://drafts.csswg.org/css-contain/#propdef-contain */
 
-atom-text-editor,
-html {
+atom-text-editor {
   atom-text-editor-minimap {
     contain: size layout paint style;
     display: block;
@@ -26,18 +25,15 @@ html {
     -webkit-user-select: none;
     user-select: none;
     cursor: default;
+    height: 100%;
+    order: 3;
+    width: 10%;
+    flex: 0 0 10%;
+    border-left: 1px solid var(--base-border-color);
 
-    &:not([stand-alone]) {
-      height: 100%;
-      order: 3;
-      width: 10%;
-      flex: 0 0 10%;
-      border-left: 1px solid var(--base-border-color);
-
-      &.left {
-        order: 1;
-        border-left: none;
-      }
+    &.left {
+      order: 1;
+      border-left: none;
     }
 
     canvas {
@@ -169,32 +165,6 @@ minimap-quick-settings {
     border: none;
   }
 
-  ol {
-    contain: size layout paint style;
-    margin-top: 0 !important;
-
-    .separator {
-      contain: size layout paint style;
-      background: var(--background-color-highlight);
-      height: 1px;
-
-      &:first-child {
-        display: none;
-      }
-    }
-
-    li:hover {
-      contain: layout paint style;
-      background: var(--background-color-highlight);
-    }
-  }
-
-  .select-list.popover-list ol.list-group {
-    contain: layout paint style;
-    overflow: visible;
-    max-height: none;
-  }
-
   .btn-group {
     contain: layout paint style;
     width: 100%;
@@ -204,4 +174,14 @@ minimap-quick-settings {
       width: 50%;
     }
   }
+}
+
+/* The layer picker, styled like scrollmap's so the two maps' lists match. */
+.minimap-view .tag {
+  margin-right: 5px;
+  border: solid 1px;
+  padding: 0.2em 0.4em;
+  border-radius: 6px;
+  vertical-align: baseline;
+  color: var(--syntax-color-constant);
 }

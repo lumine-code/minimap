@@ -5,7 +5,16 @@
       "submenu": [
         {
           "label": "Minimap",
-          "submenu": [{ "label": "Toggle", "command": "minimap:toggle" }]
+          "submenu": [
+            {
+              "label": "Toggle",
+              "command": "minimap:toggle"
+            },
+            {
+              "label": "Toggle Layers",
+              "command": "minimap:toggle-layers"
+            }
+          ]
         }
       ]
     }
