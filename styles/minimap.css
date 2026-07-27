@@ -48,6 +48,50 @@ html {
       transform-origin: 0 0;
     }
 
+    /* Marker layers, drawn under the code. A layer package styles its own
+       classes -- colour, opacity, z-index -- and the geometry is ours: what
+       reads as a thin mark beside an 8px scrollbar strip would be a slab here,
+       so the widths are a fraction of the ones scrollmap uses. */
+    .minimap-markers {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+
+      .minimap-style-resolver {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .marker {
+        position: absolute;
+        left: 0;
+        right: 0;
+        width: 100%;
+        min-height: 1px;
+        pointer-events: none;
+
+        /* An unpositioned marker tints the whole row. scrollmap centres it in a
+           40% band, which reads as a mark next to a scrollbar and as a floating
+           rectangle over code. */
+        &.left {
+          right: auto;
+          width: 12%;
+        }
+
+        &.right {
+          left: auto;
+          width: 12%;
+        }
+
+        &.full {
+          width: 100%;
+        }
+      }
+    }
+
     .minimap-visible-area {
       contain: size layout paint style;
       position: absolute;

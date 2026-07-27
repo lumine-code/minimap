@@ -51,6 +51,27 @@
       "type": "boolean",
       "default": true
     },
+    "disabledLayers": {
+      "title": "Disabled Layers",
+      "description": "Names of the marker layers this map does not draw. The scrollbar strip keeps its own list.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [
+        "cursors",
+        "highlight",
+        "references",
+        "search-panel"
+      ]
+    },
+    "thresholdScale": {
+      "title": "Threshold Scale",
+      "description": "Multiplies every layer's own marker limit before it decides to draw nothing. The minimap shows fewer rows at once than the scrollbar strip, so a limit tuned for the strip is generous here.",
+      "type": "number",
+      "minimum": 0,
+      "default": 1
+    },
     "adjustMinimapWidthToSoftWrap": {
       "title": "Adjust Minimap Width To Soft Wrap",
       "description": "When soft wrap and soft wrap at preferred line length are both enabled, cap the minimap width to match the preferred line length.",
@@ -138,5 +159,15 @@
     "eslint-plugin-n": "^18.2.2",
     "globals": "^17.7.0",
     "prettier": "^3.9.6"
+  },
+  "consumedServices": {
+    "marker.layer": {
+      "versions": {
+        "^1.0.0": "consumeMarkerLayer"
+      }
+    }
+  },
+  "dependencies": {
+    "@lumine-code/marker-host": "file:../../pkg_nodejs/marker-host"
   }
 }

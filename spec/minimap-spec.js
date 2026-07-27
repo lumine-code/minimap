@@ -364,6 +364,107 @@ describe("minimap", () => {
     });
   });
 
+  describe("marker layers", () => {
+    let specStyle, layerDisposable;
+
+    function markerCanvasRows() {
+      const { canvas } = minimapElement.markers;
+      const context = canvas.getContext("2d");
+      const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+      const lineHeight = minimap.getLineHeight() * minimap.getDevicePixelRatio();
+      const rows = new Set();
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] === 0) {
+          continue;
+        }
+        const pixel = (i - 3) / 4;
+        rows.add(Math.floor(Math.floor(pixel / canvas.width) / lineHeight));
+      }
+      return [...rows].sort((a, b) => a - b);
+    }
+
+    async function registerLayer(props) {
+      layerDisposable = mainModule.consumeMarkerLayer(props);
+      // The layer's own throttle, then the frame the element redraws on.
+      advanceClock(30);
+      await until(
+        () => markerCanvasRows().length > 0 || props.expectNothing,
+        "a marker to be drawn",
+      );
+    }
+
+    beforeEach(() => {
+      specStyle = document.createElement("style");
+      specStyle.textContent = ".marker.marker-speclayer { background-color: rgb(255, 0, 0); }";
+      document.head.appendChild(specStyle);
+    });
+
+    afterEach(() => {
+      layerDisposable?.dispose();
+      specStyle.remove();
+    });
+
+    it("draws a layer's rows, and a range as one band", async () => {
+      await registerLayer({
+        name: "speclayer",
+        getItems: () => [{ row: 2 }, { row: 5, end: 7 }],
+      });
+
+      expect(markerCanvasRows()).toEqual([2, 5, 6, 7]);
+    });
+
+    // The whole point of the contract: rows, not text-buffer markers.
+    it("creates no markers on the buffer", async () => {
+      const before = editor.getMarkerCount();
+
+      await registerLayer({ name: "speclayer", getItems: () => [{ row: 2 }] });
+
+      expect(editor.getMarkerCount()).toBe(before);
+    });
+
+    it("moves a marker when a fold moves its screen row", async () => {
+      await registerLayer({
+        name: "speclayer",
+        getItems: ({ editor: e }) => [{ row: e.screenRowForBufferRow(20) }],
+      });
+      expect(markerCanvasRows()).toEqual([20]);
+
+      editor.foldBufferRange([
+        [1, 0],
+        [10, 0],
+      ]);
+      advanceClock(30);
+      await until(() => markerCanvasRows()[0] !== 20, "the marker to follow the fold");
+
+      expect(markerCanvasRows()).toEqual([editor.screenRowForBufferRow(20)]);
+    });
+
+    it("draws nothing for a layer the user disabled on this map", async () => {
+      atom.config.set("minimap.disabledLayers", ["speclayer"]);
+
+      await registerLayer({
+        name: "speclayer",
+        expectNothing: true,
+        getItems: () => [{ row: 2 }],
+      });
+
+      expect(markerCanvasRows()).toEqual([]);
+      // Hidden, not unregistered: the items are still there to come back to.
+      expect(minimapElement.markers).toBeDefined();
+      atom.config.set("minimap.disabledLayers", []);
+      advanceClock(30);
+      await until(() => markerCanvasRows().length > 0, "the marker to come back");
+    });
+
+    it("stops drawing when the layer is unregistered", async () => {
+      await registerLayer({ name: "speclayer", getItems: () => [{ row: 2 }] });
+
+      layerDisposable.dispose();
+      layerDisposable = null;
+      await until(() => markerCanvasRows().length === 0, "the markers to be cleared");
+    });
+  });
+
   describe("quick settings", () => {
     it("opens and closes the quick settings dropdown", async () => {
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
