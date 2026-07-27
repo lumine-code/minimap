@@ -1,4 +1,4 @@
-const { StyleReader } = require("../lib/deps/style-reader");
+const { StyleReader } = require("../lib/style-reader");
 
 describe("StyleReader", () => {
   let styleReader, target, styleSheets;

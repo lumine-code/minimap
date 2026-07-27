@@ -1,3 +1,5 @@
+const { styleReader } = require("../lib/style-reader");
+
 describe("minimap", () => {
   let workspaceElement, editor, editorElement, mainModule, minimap, minimapElement;
 
@@ -214,7 +216,7 @@ describe("minimap", () => {
     // The colors the minimap paints with are read from the DOM once and cached, by the drawing
     // loop that is spied on here; seed the cache the way a draw does.
     function readEditorColor() {
-      return mainModule.styleReader.retrieveStyleFromDom([".editor"], "color", editorElement);
+      return styleReader.retrieveStyleFromDom([".editor"], "color", editorElement);
     }
 
     function tokensLayerPixels() {
