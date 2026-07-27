@@ -49,7 +49,7 @@ too wide here is a change to `.minimap-markers .marker`, not to the layer packag
 
 ## Services
 
-- **[marker.registry](https://lumine-code.github.io/docs.html#services/marker.registry)** (`^1.0.0`): consumed to read every editor's computed marker layers and the toolkit that draws them.
+- **marker.registry** (`^1.0.0`): consumed to read every editor's computed marker layers and the toolkit that draws them.
 
 ## Contributing
 
