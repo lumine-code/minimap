@@ -23,6 +23,12 @@
     "{% if keys['minimap:toggle'] %}You can hide the minimap with {{ 'minimap:toggle' | keystroke }}{% else %}The minimap draws git changes, lint messages, and search hits over a bird's-eye view of the file.{% endif %}"
   ],
   "main": "./lib/main.js",
+  "files": [
+    "lib",
+    "menus",
+    "spec",
+    "styles"
+  ],
   "scripts": {
     "test": "lumine --test spec",
     "lint": "eslint . --max-warnings 0",
