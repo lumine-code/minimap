@@ -26,7 +26,7 @@ Commands available in `atom-workspace`:
 
 The appearance can be adjusted in the user stylesheet, e.g. hide the editor scrollbar next to the minimap, tint the minimap background, and recolor the visible-area overlay:
 
-```less
+```css
 atom-text-editor[with-minimap] .vertical-scrollbar {
   display: none;
 }
