@@ -1,4 +1,3 @@
-const path = require("path");
 const { styleReader } = require("../lib/style-reader");
 
 describe("minimap", () => {
@@ -53,10 +52,9 @@ describe("minimap", () => {
     atom.config.set("minimap.redrawDelay", 0);
 
     // The map draws layers the marker hub computes, so the specs run against
-    // the real hub package -- the sibling repo in the workspace and in CI alike.
-    const markerPack = await atom.packages.activatePackage(
-      path.join(__dirname, "..", "..", "marker"),
-    );
+    // the real hub package -- bundled with the editor, so the name resolves
+    // in the workspace and in CI alike.
+    const markerPack = await atom.packages.activatePackage("marker");
     markerMain = markerPack.mainModule;
 
     // The package defers its activation to the shell-environment hook.
