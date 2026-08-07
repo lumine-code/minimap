@@ -20,10 +20,16 @@
     }
   ],
   "context-menu": {
-    "atom-text-editor": [
+    "atom-text-editor:not([mini])": [
+      {
+        "type": "separator"
+      },
       {
         "label": "Toggle Minimap",
         "command": "minimap:toggle"
+      },
+      {
+        "type": "separator"
       }
     ]
   }
