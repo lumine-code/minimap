@@ -4,7 +4,7 @@ describe("StyleReader", () => {
   let styleReader, target, styleSheets;
 
   function addStyleSheet(source) {
-    const disposable = atom.styles.addStyleSheet(source);
+    const disposable = lumine.styles.addStyleSheet(source);
     styleSheets.push(disposable);
     return disposable;
   }

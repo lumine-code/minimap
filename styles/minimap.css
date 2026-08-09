@@ -1,8 +1,8 @@
-atom-notifications:empty {
+lumine-notifications:empty {
   pointer-events: none;
 }
 
-atom-text-editor[with-minimap] {
+lumine-text-editor[with-minimap] {
   display: flex;
 
   > div {
@@ -16,8 +16,8 @@ atom-text-editor[with-minimap] {
    this means the css properties of the minimap does not affect other parts of the editor
    https://drafts.csswg.org/css-contain/#propdef-contain */
 
-atom-text-editor {
-  atom-text-editor-minimap {
+lumine-text-editor {
+  lumine-text-editor-minimap {
     contain: size layout paint style;
     display: block;
     overflow: hidden;

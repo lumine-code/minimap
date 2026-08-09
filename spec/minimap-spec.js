@@ -25,7 +25,7 @@ describe("minimap", () => {
   }
 
   function findMinimapElement() {
-    return editorElement.querySelector("atom-text-editor-minimap");
+    return editorElement.querySelector("lumine-text-editor-minimap");
   }
 
   function clientContainerWidth(component) {
@@ -42,32 +42,32 @@ describe("minimap", () => {
   }
 
   beforeEach(async () => {
-    workspaceElement = atom.views.getView(atom.workspace);
+    workspaceElement = lumine.views.getView(lumine.workspace);
     workspaceElement.style.width = "800px";
     workspaceElement.style.height = "400px";
     jasmine.attachToDOM(workspaceElement);
 
     // Redraw immediately on buffer changes instead of debouncing through the
     // frozen `setTimeout`.
-    atom.config.set("minimap.redrawDelay", 0);
+    lumine.config.set("minimap.redrawDelay", 0);
 
     // The map draws layers the marker hub computes, so the specs run against
     // the real hub package -- bundled with the editor, so the name resolves
     // in the workspace and in CI alike.
-    const markerPack = await atom.packages.activatePackage("marker");
+    const markerPack = await lumine.packages.activatePackage("marker");
     markerMain = markerPack.mainModule;
 
     // The package defers its activation to the shell-environment hook.
-    const activation = atom.packages.activatePackage("minimap");
-    atom.packages.triggerDeferredActivationHooks();
-    atom.packages.triggerActivationHook("core:loaded-shell-environment");
+    const activation = lumine.packages.activatePackage("minimap");
+    lumine.packages.triggerDeferredActivationHooks();
+    lumine.packages.triggerActivationHook("core:loaded-shell-environment");
     mainModule = (await activation).mainModule;
 
-    editor = await atom.workspace.open();
+    editor = await lumine.workspace.open();
     editor.setText(
       Array.from({ length: 60 }, (_, i) => `line ${i} with some content`).join("\n") + "\n",
     );
-    editorElement = atom.views.getView(editor);
+    editorElement = lumine.views.getView(editor);
 
     await until(() => findMinimapElement(), "the minimap element to attach");
     minimapElement = findMinimapElement();
@@ -80,24 +80,24 @@ describe("minimap", () => {
   describe("activation", () => {
     it("attaches a minimap element to the text editor", () => {
       expect(minimapElement).not.toBeNull();
-      expect(minimapElement.tagName.toLowerCase()).toBe("atom-text-editor-minimap");
+      expect(minimapElement.tagName.toLowerCase()).toBe("lumine-text-editor-minimap");
       expect(editorElement.getAttribute("with-minimap")).toBe("right");
     });
 
     it("associates the minimap model with the editor", () => {
       expect(minimap.getTextEditor()).toBe(editor);
       expect(mainModule.minimapForEditor(editor)).toBe(minimap);
-      expect(atom.views.getView(minimap)).toBe(minimapElement);
+      expect(lumine.views.getView(minimap)).toBe(minimapElement);
     });
 
     it("attaches a minimap to editors opened after activation", async () => {
-      const otherEditor = await atom.workspace.open();
-      const otherElement = atom.views.getView(otherEditor);
+      const otherEditor = await lumine.workspace.open();
+      const otherElement = lumine.views.getView(otherEditor);
       await until(
-        () => otherElement.querySelector("atom-text-editor-minimap"),
+        () => otherElement.querySelector("lumine-text-editor-minimap"),
         "a minimap on the new editor",
       );
-      expect(otherElement.querySelector("atom-text-editor-minimap")).not.toBeNull();
+      expect(otherElement.querySelector("lumine-text-editor-minimap")).not.toBeNull();
     });
 
     it("destroys the minimap when the editor is destroyed", async () => {
@@ -109,12 +109,12 @@ describe("minimap", () => {
 
   describe("minimap:toggle", () => {
     it("removes the minimap element and restores it on the next toggle", async () => {
-      atom.commands.dispatch(workspaceElement, "minimap:toggle");
+      lumine.commands.dispatch(workspaceElement, "minimap:toggle");
       await until(() => !findMinimapElement(), "the minimap element to detach");
       expect(findMinimapElement()).toBeNull();
       expect(editorElement.hasAttribute("with-minimap")).toBe(false);
 
-      atom.commands.dispatch(workspaceElement, "minimap:toggle");
+      lumine.commands.dispatch(workspaceElement, "minimap:toggle");
       await until(() => findMinimapElement(), "the minimap element to re-attach");
       expect(findMinimapElement()).not.toBeNull();
       expect(editorElement.getAttribute("with-minimap")).toBe("right");
@@ -122,7 +122,7 @@ describe("minimap", () => {
 
     it("makes the editors measure around a minimap that comes back", async () => {
       const { component } = editorElement;
-      atom.commands.dispatch(workspaceElement, "minimap:toggle");
+      lumine.commands.dispatch(workspaceElement, "minimap:toggle");
       await until(() => !findMinimapElement(), "the minimap element to detach");
       await until(
         () => component.getClientContainerWidth() === clientContainerWidth(component),
@@ -131,7 +131,7 @@ describe("minimap", () => {
       const fullWidth = component.getClientContainerWidth();
       await settle();
 
-      atom.commands.dispatch(workspaceElement, "minimap:toggle");
+      lumine.commands.dispatch(workspaceElement, "minimap:toggle");
       await until(() => findMinimapElement(), "the minimap element to re-attach");
 
       await until(
@@ -144,13 +144,13 @@ describe("minimap", () => {
 
   describe("deactivation", () => {
     it("removes all minimap elements", async () => {
-      await atom.packages.deactivatePackage("minimap");
+      await lumine.packages.deactivatePackage("minimap");
       expect(findMinimapElement()).toBeNull();
     });
 
     it("makes the editors re-measure the width the minimap gave back", async () => {
       // The minimap only ever resizes the client container the editor measures, never the
-      // `atom-text-editor` element itself, so an editor that does not pick the width back up keeps
+      // `lumine-text-editor` element itself, so an editor that does not pick the width back up keeps
       // rendering short of its right edge until the pane is resized.
       const { component } = editorElement;
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
@@ -162,7 +162,7 @@ describe("minimap", () => {
       expect(widthWithMinimap).toBeLessThan(editorElement.offsetWidth);
       await settle();
 
-      await atom.packages.deactivatePackage("minimap");
+      await lumine.packages.deactivatePackage("minimap");
 
       await until(
         () => component.getClientContainerWidth() > widthWithMinimap,
@@ -219,7 +219,7 @@ describe("minimap", () => {
     let styleSheets;
 
     function addStyleSheet(source) {
-      const disposable = atom.styles.addStyleSheet(source);
+      const disposable = lumine.styles.addStyleSheet(source);
       styleSheets.push(disposable);
       return disposable;
     }
@@ -275,7 +275,7 @@ describe("minimap", () => {
       // A theme switch attaches its stylesheets inside a View Transition and the window cross-fades
       // from there, so a minimap that waits on a timer only paints its new colors once the fade is
       // over. The update is coalesced on a microtask instead, not debounced.
-      addStyleSheet("atom-text-editor .editor { color: rgb(12, 34, 56); }");
+      addStyleSheet("lumine-text-editor .editor { color: rgb(12, 34, 56); }");
 
       await null;
       expect(minimapElement.forceUpdateNow).toHaveBeenCalled();
@@ -290,21 +290,21 @@ describe("minimap", () => {
       // With the code highlights off the tokens are drawn in the editor's own color, which is the
       // one this block restyles; with them on they take their color from each token's own scopes.
       // At full opacity that color reaches the canvas unpremultiplied, so it can be matched exactly.
-      atom.config.set("minimap.displayCodeHighlights", false);
-      atom.config.set("minimap.textOpacity", 1);
+      lumine.config.set("minimap.displayCodeHighlights", false);
+      lumine.config.set("minimap.textOpacity", 1);
       minimapElement.forceUpdateNow.and.callThrough();
       await until(() => tokensLayerHasInk(), "the minimap to paint its tokens");
       expect(tokensLayerHasColor(12, 34, 56)).toBe(false);
 
-      addStyleSheet("atom-text-editor .editor { color: rgb(12, 34, 56); }");
+      addStyleSheet("lumine-text-editor .editor { color: rgb(12, 34, 56); }");
       await null;
 
       expect(tokensLayerHasColor(12, 34, 56)).toBe(true);
     });
 
     it("redraws once for a burst of style changes", async () => {
-      addStyleSheet("atom-text-editor .editor { color: rgb(12, 34, 56); }");
-      addStyleSheet("atom-text-editor .editor { color: rgb(65, 43, 21); }");
+      addStyleSheet("lumine-text-editor .editor { color: rgb(12, 34, 56); }");
+      addStyleSheet("lumine-text-editor .editor { color: rgb(65, 43, 21); }");
 
       await null;
       expect(minimapElement.forceUpdateNow.calls.count()).toBe(1);
@@ -313,7 +313,7 @@ describe("minimap", () => {
 
     it("leaves the minimaps alone when the new styles move none of its colors", async () => {
       // These subscriptions fire for every stylesheet attached anywhere in the window.
-      addStyleSheet("atom-text-editor .some-other-package { color: rgb(12, 34, 56); }");
+      addStyleSheet("lumine-text-editor .some-other-package { color: rgb(12, 34, 56); }");
 
       await null;
       expect(minimapElement.forceUpdateNow).not.toHaveBeenCalled();
@@ -321,13 +321,13 @@ describe("minimap", () => {
 
     it("redraws for a restyle that changes no stylesheet at all", async () => {
       // A theme variant can be nothing more than an attribute on the document root: it is applied
-      // through `atom.themes.updateAppearance`, which adds and removes no style element and only
+      // through `lumine.themes.updateAppearance`, which adds and removes no style element and only
       // reports itself as a change of the active themes.
-      addStyleSheet('[ui-variant="pure"] atom-text-editor .editor { color: rgb(12, 34, 56); }');
+      addStyleSheet('[ui-variant="pure"] lumine-text-editor .editor { color: rgb(12, 34, 56); }');
       await null;
       expect(minimapElement.forceUpdateNow).not.toHaveBeenCalled();
 
-      await atom.themes.updateAppearance(() =>
+      await lumine.themes.updateAppearance(() =>
         document.documentElement.setAttribute("ui-variant", "pure"),
       );
 
@@ -338,19 +338,19 @@ describe("minimap", () => {
 
   describe("configuration", () => {
     it("moves the minimap to the left when displayMinimapOnLeft is enabled", () => {
-      atom.config.set("minimap.displayMinimapOnLeft", true);
+      lumine.config.set("minimap.displayMinimapOnLeft", true);
       expect(minimapElement.classList.contains("left")).toBe(true);
       expect(editorElement.getAttribute("with-minimap")).toBe("left");
 
-      atom.config.set("minimap.displayMinimapOnLeft", false);
+      lumine.config.set("minimap.displayMinimapOnLeft", false);
       expect(minimapElement.classList.contains("left")).toBe(false);
       expect(editorElement.getAttribute("with-minimap")).toBe("right");
     });
 
     it("applies the character size settings to the minimap metrics", () => {
-      atom.config.set("minimap.charWidth", 2);
-      atom.config.set("minimap.charHeight", 4);
-      atom.config.set("minimap.interline", 2);
+      lumine.config.set("minimap.charWidth", 2);
+      lumine.config.set("minimap.charHeight", 4);
+      lumine.config.set("minimap.interline", 2);
 
       expect(minimap.getCharWidth()).toBe(2);
       expect(minimap.getCharHeight()).toBe(4);
@@ -359,10 +359,10 @@ describe("minimap", () => {
     });
 
     it("applies the devicePixelRatioRounding setting", () => {
-      atom.config.set("minimap.devicePixelRatioRounding", false);
+      lumine.config.set("minimap.devicePixelRatioRounding", false);
       expect(minimap.getDevicePixelRatio()).toBe(window.devicePixelRatio);
 
-      atom.config.set("minimap.devicePixelRatioRounding", true);
+      lumine.config.set("minimap.devicePixelRatioRounding", true);
       expect(minimap.getDevicePixelRatio()).toBe(Math.round(window.devicePixelRatio));
     });
 
@@ -370,7 +370,7 @@ describe("minimap", () => {
       const changeSpy = jasmine.createSpy("did-change-config");
       minimap.onDidChangeConfig(changeSpy);
 
-      atom.config.set("minimap.charHeight", 5);
+      lumine.config.set("minimap.charHeight", 5);
       expect(changeSpy).toHaveBeenCalled();
     });
   });
@@ -451,7 +451,7 @@ describe("minimap", () => {
     });
 
     it("draws nothing for a layer the user disabled on this map", async () => {
-      atom.config.set("minimap.disabledLayers", ["speclayer"]);
+      lumine.config.set("minimap.disabledLayers", ["speclayer"]);
 
       await registerLayer({
         name: "speclayer",
@@ -462,7 +462,7 @@ describe("minimap", () => {
       expect(markerCanvasRows()).toEqual([]);
       // Hidden, not unregistered: the items are still there to come back to.
       expect(minimapElement.markers).toBeDefined();
-      atom.config.set("minimap.disabledLayers", []);
+      lumine.config.set("minimap.disabledLayers", []);
       advanceClock(30);
       await until(() => markerCanvasRows().length > 0, "the marker to come back");
     });
@@ -484,26 +484,26 @@ describe("minimap", () => {
         getItems: () => [],
       });
 
-      atom.commands.dispatch(workspaceElement, "minimap:toggle-layers");
+      lumine.commands.dispatch(workspaceElement, "minimap:toggle-layers");
       const view = await untilPresent(() => document.querySelector(".minimap-view"));
       await until(() => view.textContent.includes("speclayer"), "the layer to be listed");
       // Not a provided layer, but the same question, so the same list.
       expect(view.textContent).toContain("code-highlights");
 
-      atom.commands.dispatch(workspaceElement, "minimap:toggle-layers");
+      lumine.commands.dispatch(workspaceElement, "minimap:toggle-layers");
       disposable.dispose();
     });
 
     // Each map keeps its own list: switching a layer off here leaves the
     // scrollbar strip alone.
     it("writes only the minimap's own disabled list", () => {
-      atom.config.set("minimap.disabledLayers", []);
-      atom.config.set("scrollmap.disabledLayers", []);
+      lumine.config.set("minimap.disabledLayers", []);
+      lumine.config.set("scrollmap.disabledLayers", []);
 
       mainModule.markerLayers.picker().toggle({ name: "speclayer" });
 
-      expect(atom.config.get("minimap.disabledLayers")).toContain("speclayer");
-      expect(atom.config.get("scrollmap.disabledLayers")).not.toContain("speclayer");
+      expect(lumine.config.get("minimap.disabledLayers")).toContain("speclayer");
+      expect(lumine.config.get("scrollmap.disabledLayers")).not.toContain("speclayer");
     });
   });
 });

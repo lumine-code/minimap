@@ -17,7 +17,7 @@ To install `minimap` search for _minimap_ in the Install pane of the Lumine sett
 
 ## Commands
 
-Commands available in `atom-workspace`:
+Commands available in `lumine-workspace`:
 
 - `minimap:toggle`: show or hide the minimap in all text editors,
 - `minimap:toggle-layers`: open a list to switch the drawn layers on and off.
@@ -27,11 +27,11 @@ Commands available in `atom-workspace`:
 The appearance can be adjusted in the user stylesheet, e.g. hide the editor scrollbar next to the minimap, tint the minimap background, and recolor the visible-area overlay:
 
 ```css
-atom-text-editor[with-minimap] .vertical-scrollbar {
+lumine-text-editor[with-minimap] .vertical-scrollbar {
   display: none;
 }
 
-atom-text-editor atom-text-editor-minimap {
+lumine-text-editor lumine-text-editor-minimap {
   background: var(--app-background-color);
 
   .minimap-visible-area::after {
