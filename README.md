@@ -13,7 +13,7 @@ A preview of the full source code.
 
 ## Installation
 
-To install `minimap` search for _minimap_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/minimap`.
+To install `minimap` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/minimap`.
 
 ## Commands
 
@@ -44,12 +44,11 @@ lumine-text-editor lumine-text-editor-minimap {
 }
 ```
 
-Marker layers style their own colours; the widths above are the minimap's, so narrowing a layer that feels
-too wide here is a change to `.minimap-markers .marker`, not to the layer package.
+Marker layers style their own colours; the widths above are the minimap's, so narrowing a layer that feels too wide here is a change to `.minimap-markers .marker`, not to the layer package.
 
 ## Services
 
-- **marker.registry** (`^1.0.0`): consumed to read every editor's computed marker layers and the toolkit that draws them.
+- `marker.registry`: consumed to read every editor's computed marker layers and the toolkit that draws them.
 
 ## Contributing
 
