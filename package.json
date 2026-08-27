@@ -87,6 +87,7 @@
     "charWidth": {
       "title": "Character Width",
       "description": "Width of each character block in the minimap, in pixels.",
+      "scopeResolution": "grammar",
       "type": "number",
       "minimum": 0.5,
       "default": 1
@@ -94,6 +95,7 @@
     "charHeight": {
       "title": "Character Height",
       "description": "Height of each character block in the minimap, in pixels.",
+      "scopeResolution": "grammar",
       "type": "number",
       "minimum": 0.5,
       "default": 2
@@ -101,6 +103,7 @@
     "interline": {
       "title": "Interline Spacing",
       "description": "Extra vertical space between lines in the minimap, in pixels.",
+      "scopeResolution": "grammar",
       "type": "number",
       "minimum": 0,
       "default": 1
@@ -116,18 +119,21 @@
     "independentMinimapScroll": {
       "title": "Independent Minimap Scroll On Mouse Wheel",
       "description": "When enabled, scrolling the mouse wheel over the minimap moves the minimap independently without scrolling the editor. The minimap still syncs back whenever the editor itself is scrolled.",
+      "scopeResolution": "grammar",
       "type": "boolean",
       "default": false
     },
     "scrollSensitivity": {
       "title": "Independent Scroll Sensitivity",
       "description": "Scroll speed multiplier used when independent minimap scroll is enabled.",
+      "scopeResolution": "grammar",
       "type": "number",
       "default": 0.5
     },
     "redrawDelay": {
       "title": "Redraw Delay (ms)",
       "description": "Minimum time in milliseconds between minimap redraws triggered by text changes. Higher values improve responsiveness on large files; 0 redraws immediately on every change.",
+      "scopeResolution": "grammar",
       "type": "number",
       "minimum": 0,
       "maximum": 2000,
@@ -136,6 +142,7 @@
     "devicePixelRatioRounding": {
       "title": "Device Pixel Ratio Rounding",
       "description": "Round the device pixel ratio used for canvas rendering. Disable if you see blurry or misaligned pixels on fractional-DPI displays.",
+      "scopeResolution": "grammar",
       "type": "boolean",
       "default": true
     },
