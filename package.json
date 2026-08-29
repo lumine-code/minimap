@@ -176,7 +176,7 @@
   "consumedServices": {
     "marker.registry": {
       "versions": {
-        "^1.0.0": "consumeMarkerRegistry"
+        "^2.0.0": "consumeMarkerRegistry"
       }
     }
   }

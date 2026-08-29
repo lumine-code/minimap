@@ -173,6 +173,34 @@ describe("minimap", () => {
   });
 
   describe("rendering", () => {
+    it("rebinds canvas state, DPI and resize listeners after moving to another document", async () => {
+      const frame = document.createElement("iframe");
+      jasmine.attachToDOM(frame);
+      const originalParent = editorElement.parentNode;
+      Object.defineProperty(frame.contentWindow, "devicePixelRatio", {
+        configurable: true,
+        value: 2,
+      });
+      spyOn(minimapElement, "measureHeightAndWidth").and.callThrough();
+
+      frame.contentDocument.body.appendChild(editorElement);
+      await nextFrame();
+      minimapElement.measureHeightAndWidth.calls.reset();
+      frame.contentWindow.dispatchEvent(new frame.contentWindow.Event("resize"));
+      minimapElement.cancelPendingFrame();
+      minimapElement.requestUpdate();
+
+      expect(minimapElement.ownerDocument).toBe(frame.contentDocument);
+      expect(minimapElement.tokensLayer.offscreenCanvas.ownerDocument).toBe(frame.contentDocument);
+      expect(minimapElement.frameWindow).toBe(frame.contentWindow);
+      expect(minimap.getDevicePixelRatio()).toBe(2);
+      expect(minimapElement.measureHeightAndWidth).toHaveBeenCalled();
+
+      originalParent.appendChild(editorElement);
+      expect(minimapElement.frameWindow).toBe(window);
+      frame.remove();
+    });
+
     it("is visible and sized within the editor", async () => {
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       expect(minimapElement.offsetWidth).toBeGreaterThan(0);
