@@ -22,6 +22,7 @@
   "backgroundTips": [
     "{% if keys['minimap:toggle'] %}You can hide the minimap with {{ 'minimap:toggle' | keystroke }}{% else %}The minimap draws git changes, lint messages, and search hits over a bird's-eye view of the file.{% endif %}"
   ],
+  "requiresRestartOnUpdate": true,
   "specPackages": [
     "marker"
   ],
@@ -159,9 +160,6 @@
       "default": 160
     }
   },
-  "activationHooks": [
-    "core:loaded-shell-environment"
-  ],
   "viewProviders": [
     "minimapViewProvider"
   ],

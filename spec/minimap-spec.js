@@ -59,8 +59,8 @@ describe("minimap", () => {
 
     // The package defers its activation to the shell-environment hook.
     const activation = lumine.packages.activatePackage("minimap");
-    lumine.packages.triggerDeferredActivationHooks();
-    lumine.packages.triggerActivationHook("core:loaded-shell-environment");
+    Promise.resolve();
+    lumine.hooks.trigger("core:loaded-shell-environment");
     mainModule = (await activation).mainModule;
 
     editor = await lumine.workspace.open();
