@@ -19,9 +19,6 @@
   "engines": {
     "lumine": "^1.0.0"
   },
-  "backgroundTips": [
-    "{% if keys['minimap:toggle'] %}You can hide the minimap with {{ 'minimap:toggle' | keystroke }}{% else %}The minimap draws git changes, lint messages, and search hits over a bird's-eye view of the file.{% endif %}"
-  ],
   "requiresRestartOnUpdate": true,
   "specPackages": [
     "marker"
@@ -163,6 +160,13 @@
   "viewProviders": [
     "minimapViewProvider"
   ],
+  "providedServices": {
+    "background-tips.provider": {
+      "versions": {
+        "1.0.0": "provideBackgroundTips"
+      }
+    }
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.9.1",
