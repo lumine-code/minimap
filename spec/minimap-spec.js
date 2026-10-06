@@ -321,8 +321,8 @@ describe("minimap", () => {
 
     it("redraws for a restyle that changes no stylesheet at all", async () => {
       // A theme variant can be nothing more than an attribute on the document root: it is applied
-      // through `lumine.themes.updateAppearance`, which adds and removes no style element and only
-      // reports itself as a change of the active themes.
+      // through `lumine.themes.updateAppearance`, which adds and removes no style element. The
+      // variable event covers that cascade change alongside ordinary stylesheet changes.
       addStyleSheet('[ui-variant="pure"] lumine-text-editor .editor { color: rgb(12, 34, 56); }');
       await null;
       expect(minimapElement.forceUpdateNow).not.toHaveBeenCalled();
