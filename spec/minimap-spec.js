@@ -196,6 +196,139 @@ describe("minimap", () => {
       expect(minimapElement.drawLines).toHaveBeenCalled();
     });
 
+    it("moves the viewport indicator without rewriting unchanged canvas pixels", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      minimapElement.forceUpdateNow();
+      const { canvas, context } = minimapElement.tokensLayer;
+      const before = Array.from(context.getImageData(0, 0, canvas.width, canvas.height).data);
+      const top = parseFloat(minimapElement.visibleArea.style.top);
+      minimapElement.drawLines.calls.reset();
+      spyOn(minimapElement.tokensLayer, "clearCanvas").and.callThrough();
+      spyOn(minimapElement.tokensLayer, "copyToOffscreen").and.callThrough();
+      spyOn(minimapElement.markers, "draw").and.callThrough();
+
+      editorElement.setScrollTop(40);
+      minimapElement.update();
+
+      expect(parseFloat(minimapElement.visibleArea.style.top)).toBeGreaterThan(top);
+      expect(minimapElement.drawLines).not.toHaveBeenCalled();
+      expect(minimapElement.tokensLayer.clearCanvas).not.toHaveBeenCalled();
+      expect(minimapElement.tokensLayer.copyToOffscreen).not.toHaveBeenCalled();
+      expect(minimapElement.markers.draw).not.toHaveBeenCalled();
+      expect(Array.from(context.getImageData(0, 0, canvas.width, canvas.height).data)).toEqual(
+        before,
+      );
+    });
+
+    it("keeps deferred row edits out of geometry-only frames until their redraw delay expires", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      lumine.config.set("minimap.redrawDelay", 300);
+      minimapElement.forceUpdateNow();
+      const { canvas, context } = minimapElement.tokensLayer;
+      const pixels = () => Array.from(context.getImageData(0, 0, canvas.width, canvas.height).data);
+      const before = pixels();
+      spyOn(minimapElement.tokensLayer, "copyToOffscreen").and.callThrough();
+
+      try {
+        editor.setTextInBufferRange(
+          [
+            [2, 0],
+            [2, 0],
+          ],
+          "new row\n",
+        );
+        editorElement.setScrollTop(40);
+        minimapElement.update();
+
+        expect(minimap.pendingChangeEvents.length).toBeGreaterThan(0);
+        expect(minimapElement.tokensLayer.copyToOffscreen).not.toHaveBeenCalled();
+        expect(pixels()).toEqual(before);
+
+        minimap.flushChanges();
+        minimapElement.update();
+        expect(minimapElement.tokensLayer.copyToOffscreen).toHaveBeenCalled();
+        const after = pixels();
+        expect(after).not.toEqual(before);
+        minimapElement.forceUpdateNow();
+        expect(pixels()).toEqual(after);
+      } finally {
+        lumine.config.set("minimap.redrawDelay", 0);
+      }
+    });
+
+    it("redraws newly exposed minimap rows and repaints explicit invalidations", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      editor.setText(Array.from({ length: 1000 }, (_, i) => `line ${i}`).join("\n"));
+      await settle();
+      minimapElement.forceUpdateNow();
+      const firstRow = minimapElement.offscreenFirstRow;
+      minimapElement.drawLines.calls.reset();
+
+      editorElement.setScrollTop(800);
+      minimapElement.update();
+
+      expect(minimapElement.offscreenFirstRow).toBeGreaterThan(firstRow);
+      expect(minimapElement.drawLines).toHaveBeenCalled();
+      minimapElement.drawLines.calls.reset();
+      minimapElement.forceUpdateNow();
+      expect(minimapElement.drawLines).toHaveBeenCalled();
+    });
+
+    it("redraws a reset backing store even when its dimensions did not change", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      minimapElement.forceUpdateNow();
+      const { width, height } = minimapElement.tokensLayer.getSize();
+      const { context } = minimapElement.tokensLayer;
+      const before = Array.from(context.getImageData(0, 0, width, height).data);
+      minimapElement.drawLines.calls.reset();
+
+      minimapElement.setCanvasesSize(width, height);
+      minimapElement.updateCanvas();
+
+      expect(minimapElement.drawLines).toHaveBeenCalled();
+      expect(Array.from(context.getImageData(0, 0, width, height).data)).toEqual(before);
+    });
+
+    it("does not reset an unchanged canvas on a scaled display", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      spyOn(minimap, "getDevicePixelRatio").and.returnValue(1.5);
+      minimapElement.updateCanvasesSize(minimapElement.width);
+      minimapElement.forceUpdateNow();
+      spyOn(minimapElement, "setCanvasesSize").and.callThrough();
+      minimapElement.drawLines.calls.reset();
+
+      minimapElement.updateCanvasesSize(minimapElement.width);
+      minimapElement.updateCanvas();
+
+      expect(minimapElement.setCanvasesSize).not.toHaveBeenCalled();
+      expect(minimapElement.drawLines).not.toHaveBeenCalled();
+    });
+
+    it("refreshes the backing resolution when scale changes without a CSS resize", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      minimapElement.forceUpdateNow();
+      const before = minimapElement.tokensLayer.getSize();
+      spyOn(minimap, "getDevicePixelRatio").and.returnValue(1.5);
+      minimapElement.drawLines.calls.reset();
+
+      minimapElement.measureHeightAndWidth(false, false);
+      minimapElement.update();
+
+      const after = minimapElement.tokensLayer.getSize();
+      expect(after.width).toBe(Math.trunc(minimapElement.width * 1.5));
+      expect(after.height).toBe(
+        Math.trunc((minimapElement.height + minimap.getLineHeight()) * 1.5),
+      );
+      expect(after).not.toEqual(before);
+      expect(minimapElement.drawLines).toHaveBeenCalled();
+    });
+
     it("scrolls the editor when the canvas is pressed", async () => {
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       spyOn(minimap, "setTextEditorScrollTop");
@@ -212,6 +345,39 @@ describe("minimap", () => {
       );
 
       expect(minimap.setTextEditorScrollTop).toHaveBeenCalled();
+    });
+  });
+
+  describe("editor scroll metrics", () => {
+    it("keeps block-aware vertical scroll reads independent of horizontal measurements", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      const block = document.createElement("div");
+      block.style.height = "40px";
+      const marker = editor.markBufferPosition([0, 0]);
+      const decoration = editor.decorateMarker(marker, {
+        type: "block",
+        position: "before",
+        item: block,
+      });
+      await settle();
+      const component = editorElement.component;
+      editorElement.setScrollTop(component.pixelPositionAfterBlocksForRow(8) + 3.25);
+      await settle();
+      component.horizontalPixelPositionsByScreenLineId.clear();
+      minimap.adapter.clearCache();
+      spyOn(component, "updateSync").and.callThrough();
+      spyOn(editorElement, "pixelPositionForScreenPosition").and.callThrough();
+
+      const firstRow = editorElement.getFirstVisibleScreenRow();
+      const expected =
+        firstRow * editor.getLineHeightInPixels() +
+        editorElement.getScrollTop() -
+        component.pixelPositionAfterBlocksForRow(firstRow);
+      expect(minimap.adapter.getScrollTop()).toBeCloseTo(expected, 5);
+      expect(editorElement.pixelPositionForScreenPosition).not.toHaveBeenCalled();
+      expect(component.updateSync).not.toHaveBeenCalled();
+      decoration.destroy();
+      marker.destroy();
     });
   });
 
@@ -422,6 +588,29 @@ describe("minimap", () => {
       });
 
       expect(markerCanvasRows()).toEqual([2, 5, 6, 7]);
+    });
+
+    it("repaints changed markers without copying the unchanged token canvas", async () => {
+      let layer;
+      let row = 2;
+      await registerLayer({
+        name: "speclayer",
+        initialize: (value) => (layer = value),
+        getItems: () => [{ row }],
+      });
+      await settle();
+      minimapElement.forceUpdateNow();
+      minimapElement.drawLines.calls.reset();
+      spyOn(minimapElement.tokensLayer, "copyToOffscreen").and.callThrough();
+
+      row = 5;
+      layer.update();
+      advanceClock(30);
+      await until(() => markerCanvasRows()[0] === 5, "the marker to move");
+
+      expect(markerCanvasRows()).toEqual([5]);
+      expect(minimapElement.drawLines).not.toHaveBeenCalled();
+      expect(minimapElement.tokensLayer.copyToOffscreen).not.toHaveBeenCalled();
     });
 
     // The whole point of the contract: rows, not text-buffer markers.
