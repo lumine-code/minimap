@@ -19,11 +19,6 @@ describe("minimap", () => {
     throw new Error(`Timed out waiting for ${description}`);
   }
 
-  async function untilPresent(get, description = "an element") {
-    await until(() => get(), description);
-    return get();
-  }
-
   function findMinimapElement() {
     return editorElement.querySelector("lumine-text-editor-minimap");
   }
@@ -50,6 +45,7 @@ describe("minimap", () => {
     // Redraw immediately on buffer changes instead of debouncing through the
     // frozen `setTimeout`.
     lumine.config.set("minimap.redrawDelay", 0);
+    lumine.config.set("marker.cursors.enabled", false);
 
     // The map draws layers the marker hub computes, so the specs run against
     // the real hub package -- bundled with the editor, so the name resolves
@@ -639,21 +635,48 @@ describe("minimap", () => {
       expect(markerCanvasRows()).toEqual([editor.screenRowForBufferRow(20)]);
     });
 
-    it("draws nothing for a layer the user disabled on this map", async () => {
-      lumine.config.set("minimap.disabledLayers", ["speclayer"]);
+    it("follows the marker hub's global layer lifecycle", async () => {
+      let row = 2;
+      const getItems = jasmine.createSpy("getItems").and.callFake(() => [{ row }]);
+      await registerLayer({ name: "speclayer", getItems });
+      expect(markerCanvasRows()).toEqual([2]);
 
+      lumine.config.set("marker.disabledLayers", ["speclayer"]);
+      await until(() => markerCanvasRows().length === 0, "the disabled layer to clear");
+      expect(markerCanvasRows()).toEqual([]);
+      expect([...mainModule.markerLayers.enabledLayersFor(editor)]).toEqual([]);
+      const computes = getItems.calls.count();
+      row = 5;
+      editor.setCursorBufferPosition([1, 0]);
+      advanceClock(30);
+      expect(getItems.calls.count()).toBe(computes);
+
+      lumine.config.set("marker.disabledLayers", []);
+      advanceClock(30);
+      await until(() => markerCanvasRows()[0] === 5, "the re-enabled layer to refresh");
+      expect(getItems.calls.count()).toBeGreaterThan(computes);
+      expect(markerCanvasRows()).toEqual([5]);
+    });
+
+    it("applies the renderer threshold without changing the hub's items", async () => {
+      lumine.config.set("minimap.specThreshold", 1);
+      const getItems = jasmine.createSpy("getItems").and.returnValue([{ row: 2 }, { row: 5 }]);
       await registerLayer({
         name: "speclayer",
+        threshold: "minimap.specThreshold",
         expectNothing: true,
-        getItems: () => [{ row: 2 }],
+        getItems,
       });
-
       expect(markerCanvasRows()).toEqual([]);
-      // Hidden, not unregistered: the items are still there to come back to.
-      expect(minimapElement.markers).toBeDefined();
-      lumine.config.set("minimap.disabledLayers", []);
-      advanceClock(30);
-      await until(() => markerCanvasRows().length > 0, "the marker to come back");
+      const layer = [...mainModule.markerLayers.enabledLayersFor(editor)];
+      expect(layer).toEqual([]);
+      const computes = getItems.calls.count();
+
+      lumine.config.set("minimap.thresholdScale", 2);
+      await until(() => markerCanvasRows().length === 2, "the threshold to show the layer");
+      expect(markerCanvasRows()).toEqual([2, 5]);
+      expect([...mainModule.markerLayers.enabledLayersFor(editor)][0].items.length).toBe(2);
+      expect(getItems.calls.count()).toBe(computes);
     });
 
     it("stops drawing when the layer is unregistered", async () => {
@@ -662,37 +685,6 @@ describe("minimap", () => {
       layerDisposable.dispose();
       layerDisposable = null;
       await until(() => markerCanvasRows().length === 0, "the markers to be cleared");
-    });
-  });
-
-  describe("minimap:toggle-layers", () => {
-    it("lists the registered layers and code highlights, and toggles them", async () => {
-      const disposable = markerMain.consumeMarkerLayer({
-        name: "speclayer",
-        description: "Spec layer",
-        getItems: () => [],
-      });
-
-      lumine.commands.dispatch(workspaceElement, "minimap:toggle-layers");
-      const view = await untilPresent(() => document.querySelector(".minimap-view"));
-      await until(() => view.textContent.includes("speclayer"), "the layer to be listed");
-      // Not a provided layer, but the same question, so the same list.
-      expect(view.textContent).toContain("code-highlights");
-
-      lumine.commands.dispatch(workspaceElement, "minimap:toggle-layers");
-      disposable.dispose();
-    });
-
-    // Each map keeps its own list: switching a layer off here leaves the
-    // scrollbar strip alone.
-    it("writes only the minimap's own disabled list", () => {
-      lumine.config.set("minimap.disabledLayers", []);
-      lumine.config.set("scrollmap.disabledLayers", []);
-
-      mainModule.markerLayers.picker().toggle({ name: "speclayer" });
-
-      expect(lumine.config.get("minimap.disabledLayers")).toContain("speclayer");
-      expect(lumine.config.get("scrollmap.disabledLayers")).not.toContain("speclayer");
     });
   });
 });

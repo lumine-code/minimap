@@ -1,7 +1,5 @@
-const path = require("node:path");
-
 describe("Minimap runtime lifetime audit", () => {
-  let main, editor, view, model, registries, leases, observed, toolkit, Registry, LayerPicker;
+  let main, editor, view, model, registries, leases, observed, toolkit, Registry;
   beforeEach(async () => {
     const workspace = lumine.views.getView(lumine.workspace);
     workspace.style.width = "800px";
@@ -10,7 +8,6 @@ describe("Minimap runtime lifetime audit", () => {
     const marker = await lumine.packages.activatePackage("marker");
     toolkit = marker.mainModule.provideMarkerRegistry();
     Registry = marker.mainModule.registry.constructor;
-    ({ LayerPicker } = require(path.join(marker.path, "lib/picker")));
     await lumine.packages.deactivatePackage("marker");
     lumine.config.set("minimap.autoToggle", true);
     main = (await lumine.packages.activatePackage("minimap")).mainModule;
@@ -43,7 +40,6 @@ describe("Minimap runtime lifetime audit", () => {
       providers: () => [...registry.providers.values()],
       onDidChangeItems: (cb) => registry.onDidChangeItems(cb),
       onDidChangeLayers: (cb) => registry.onDidChangeLayers(cb),
-      createPicker: (options) => new LayerPicker({ registry, ...options }),
     };
     return { registry, payload };
   }
@@ -52,34 +48,28 @@ describe("Minimap runtime lifetime audit", () => {
     leases.push(lease);
     return lease;
   }
-  it("keeps the newest real picker and marker hold when an older provider disappears", () => {
+  it("keeps the newest marker hold when an older provider disappears", () => {
     const older = service(),
       newer = service();
     const first = provide(older.payload);
     main.markerLayers.attach(editor);
-    const oldPicker = main.markerLayers.picker();
     provide(newer.payload);
     main.markerLayers.attach(editor);
-    const picker = main.markerLayers.picker();
-    spyOn(picker, "destroy").and.callThrough();
     first.dispose();
-    expect(main.markerLayers.picker()).toBe(picker);
-    expect(picker.destroy).not.toHaveBeenCalled();
+    expect(main.markerLayers.registry).toBe(newer.payload);
     expect(newer.registry.sets.get(editor)?.refs).toBe(1);
     expect(older.registry.sets.has(editor)).toBe(false);
-    expect(oldPicker).not.toBe(picker);
   });
   it("shares a payload hold until its final real service edge disappears", () => {
     const { registry, payload } = service();
     const first = provide(payload);
     main.markerLayers.attach(editor);
-    const picker = main.markerLayers.picker();
     const second = provide(payload);
     main.markerLayers.attach(editor);
-    expect(main.markerLayers.picker()).toBe(picker);
+    expect(main.markerLayers.registry).toBe(payload);
     expect(registry.sets.get(editor)?.refs).toBe(1);
     first.dispose();
-    expect(main.markerLayers.picker()).toBe(picker);
+    expect(main.markerLayers.registry).toBe(payload);
     expect(registry.sets.get(editor)?.refs).toBe(1);
     second.dispose();
     expect(registry.sets.has(editor)).toBe(false);

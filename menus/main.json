@@ -9,10 +9,6 @@
             {
               "label": "Toggle",
               "command": "minimap:toggle"
-            },
-            {
-              "label": "Toggle Layers",
-              "command": "minimap:toggle-layers"
             }
           ]
         }

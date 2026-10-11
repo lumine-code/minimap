@@ -113,13 +113,3 @@ lumine-text-editor {
     }
   }
 }
-
-/* The layer picker, styled like scrollmap's so the two maps' lists match. */
-.minimap-view .tag {
-  margin-right: 5px;
-  border: solid 1px;
-  padding: 0.2em 0.4em;
-  border-radius: 6px;
-  vertical-align: baseline;
-  color: var(--syntax-color-constant);
-}

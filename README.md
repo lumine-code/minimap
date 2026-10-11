@@ -7,8 +7,7 @@ A preview of the full source code.
 - **Canvas rendering**: incremental redraws — only the row ranges that changed are repainted.
 - **Syntax highlighting**: token colors are resolved directly from the active theme via computed DOM styles and cached per scope, so the minimap matches the editor exactly.
 - **Scroll past end**: the minimap proportionally tracks the full editor scroll range, including the scroll-past-end zone.
-- **Marker layers**: git changes, linter messages, search hits and more are drawn over the code — the same layers the scrollbar strip draws, computed once by the `marker` package and read here through its `marker.registry` service.
-- **Layer picker**: switch marker layers and code highlights on and off, for this map alone.
+- **Marker layers**: git changes, linter messages, search hits and more are drawn over the code — enabled in the `marker` package, computed once and shared with the scrollbar strip through `marker.registry`.
 - **Independent scroll**: optionally decouple mouse-wheel scrolling on the minimap from the editor.
 
 ## Installation
@@ -19,8 +18,7 @@ To install `minimap` search for it in the Install pane of the Lumine settings, o
 
 Commands available in `lumine-workspace`:
 
-- `minimap:toggle`: show or hide the minimap in all text editors,
-- `minimap:toggle-layers`: open a list to switch the drawn layers on and off.
+- `minimap:toggle`: show or hide the minimap in all text editors.
 
 ## Customization
 
