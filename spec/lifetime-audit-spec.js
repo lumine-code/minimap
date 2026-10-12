@@ -94,6 +94,20 @@ describe("Minimap runtime lifetime audit", () => {
     expect(second.disconnect).toHaveBeenCalledTimes(1);
     expect(first.disconnect).toHaveBeenCalledTimes(1);
   });
+
+  it("preserves the connected minimap and native observers while its center item moves", async () => {
+    const owner = view.attachmentSubscriptions;
+    const observer = view.intersectionObserver;
+    const disconnect = spyOn(observer, "disconnect").and.callThrough();
+    const { pane } = await lumine.workspace.movePaneItem(editor, { splitDirection: "right" });
+    expect(pane.getActiveItem()).toBe(editor);
+    expect(view.attachmentSubscriptions).toBe(owner);
+    expect(view.intersectionObserver).toBe(observer);
+    expect(view.getModel()).toBe(model);
+    expect(view.isConnected).toBe(true);
+    expect(disconnect).not.toHaveBeenCalled();
+    expect(view.destroyed).not.toBe(true);
+  });
   it("ends native body drag listeners when the view is destroyed mid gesture", () => {
     view.visibleArea.dispatchEvent(
       new MouseEvent("mousedown", { bubbles: true, button: 0, clientY: 10 }),
