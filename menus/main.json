@@ -8,7 +8,9 @@
           "submenu": [
             {
               "label": "Minimap",
-              "command": "minimap:toggle"
+              "command": "minimap:toggle",
+              "group": "structure",
+              "order": 20
             }
           ]
         }
