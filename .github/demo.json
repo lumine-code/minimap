@@ -1,0 +1,16 @@
+{
+  "title": "minimap",
+  "description": "Navigate a long source file using the minimap.",
+  "recordedOn": "2026-10-13",
+  "sourceRevision": "4292850cef83a3ebabf8c93dc85287eb38759f6f",
+  "mode": "normal",
+  "fontSettings": "default",
+  "images": [
+    {
+      "file": "demo.png",
+      "label": "Navigate a long source file using the minimap.",
+      "width": 1200,
+      "height": 760
+    }
+  ]
+}

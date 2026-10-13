@@ -10,6 +10,8 @@ A preview of the full source code.
 - **Marker layers**: git changes, linter messages, search hits and more are drawn over the code — enabled in the `marker` package, computed once and shared with the scrollbar strip through `marker.registry`.
 - **Independent scroll**: optionally decouple mouse-wheel scrolling on the minimap from the editor.
 
+![Navigate a long source file using the minimap.](.github/demo.png)
+
 ## Installation
 
 To install `minimap` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/minimap`.
