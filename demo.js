@@ -22,8 +22,9 @@ module.exports = {
             lumine.commands.dispatch(lumine.workspace.getElement(), "minimap:toggle");
         }
       },
-      ready() {
+      ready({ state }) {
         return Boolean(
+          state.editor.getLineCount() > 120 &&
           document.querySelector("lumine-text-editor-minimap, minimap-element, .minimap"),
         );
       },
