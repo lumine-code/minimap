@@ -558,8 +558,8 @@ describe("minimap", () => {
 
     async function registerLayer(props) {
       layerDisposable = markerMain.consumeMarkerLayer(props);
-      // The layer's own throttle, then the frame the element redraws on.
-      advanceClock(30);
+      // Compute the hub's pending items before awaiting the canvas redraw.
+      lumine.views.performDocumentUpdate();
       await until(
         () => markerCanvasRows().length > 0 || props.expectNothing,
         "a marker to be drawn",
@@ -601,7 +601,7 @@ describe("minimap", () => {
 
       row = 5;
       layer.update();
-      advanceClock(30);
+      lumine.views.performDocumentUpdate();
       await until(() => markerCanvasRows()[0] === 5, "the marker to move");
 
       expect(markerCanvasRows()).toEqual([5]);
@@ -629,7 +629,7 @@ describe("minimap", () => {
         [1, 0],
         [10, 0],
       ]);
-      advanceClock(30);
+      lumine.views.performDocumentUpdate();
       await until(() => markerCanvasRows()[0] !== 20, "the marker to follow the fold");
 
       expect(markerCanvasRows()).toEqual([editor.screenRowForBufferRow(20)]);
@@ -648,11 +648,11 @@ describe("minimap", () => {
       const computes = getItems.calls.count();
       row = 5;
       editor.setCursorBufferPosition([1, 0]);
-      advanceClock(30);
+      lumine.views.performDocumentUpdate();
       expect(getItems.calls.count()).toBe(computes);
 
       lumine.config.set("marker.disabledLayers", []);
-      advanceClock(30);
+      lumine.views.performDocumentUpdate();
       await until(() => markerCanvasRows()[0] === 5, "the re-enabled layer to refresh");
       expect(getItems.calls.count()).toBeGreaterThan(computes);
       expect(markerCanvasRows()).toEqual([5]);
