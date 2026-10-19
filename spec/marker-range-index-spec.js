@@ -70,4 +70,12 @@ describe("marker viewport index", () => {
       visible.forEach((item, index) => expect(item).toBe(items[index]));
     }
   });
+
+  it("avoids copying a dense layer when only a few blocks are offscreen", () => {
+    const items = Array.from({ length: 1024 }, (_, row) => ({ row: row < 128 ? 3000 : 5 }));
+    for (let read = 0; read < 3; read++) {
+      expect(candidateItemsInRange(items, 0, 10)).toBe(items);
+      expect(itemsInRange(items, 0, 10)).toEqual(items.slice(128));
+    }
+  });
 });
