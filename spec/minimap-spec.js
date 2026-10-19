@@ -586,7 +586,7 @@ describe("minimap", () => {
       expect(markerCanvasRows()).toEqual([2, 5, 6, 7]);
     });
 
-    it("repaints changed markers without copying the unchanged token canvas", async () => {
+    it("paints the newest markers in their publishing frame without copying the token canvas", async () => {
       let layer;
       let row = 2;
       await registerLayer({
@@ -598,15 +598,71 @@ describe("minimap", () => {
       minimapElement.forceUpdateNow();
       minimapElement.drawLines.calls.reset();
       spyOn(minimapElement.tokensLayer, "copyToOffscreen").and.callThrough();
+      spyOn(minimapElement.markers, "draw").and.callThrough();
+      spyOn(minimapElement, "requestUpdate").and.callThrough();
 
       row = 5;
       layer.update();
+      row = 9;
+      layer.update();
+      expect(minimapElement.markers.draw).not.toHaveBeenCalled();
       lumine.views.performDocumentUpdate();
-      await until(() => markerCanvasRows()[0] === 5, "the marker to move");
 
-      expect(markerCanvasRows()).toEqual([5]);
+      expect(markerCanvasRows()).toEqual([9]);
+      expect(minimapElement.markers.draw).toHaveBeenCalledTimes(1);
+      expect(minimapElement.pendingMarkerUpdate).toBeNull();
+      expect(minimapElement.requestUpdate).not.toHaveBeenCalled();
       expect(minimapElement.drawLines).not.toHaveBeenCalled();
       expect(minimapElement.tokensLayer.copyToOffscreen).not.toHaveBeenCalled();
+    });
+
+    for (const lifecycle of ["disconnectedCallback", "adoptedCallback", "destroy"]) {
+      it(`cancels a queued marker paint on ${lifecycle}`, async () => {
+        await registerLayer({ name: "speclayer", getItems: () => [{ row: 2 }] });
+        await settle();
+        const { Disposable } = require("lumine");
+        let read, paint;
+        const cancelPaint = jasmine.createSpy("cancelPaint");
+        spyOn(lumine.views, "readDocument").and.callFake((callback) => {
+          read = callback;
+          return new Disposable();
+        });
+        spyOn(lumine.views, "updateDocument").and.callFake((callback) => {
+          paint = callback;
+          return new Disposable(cancelPaint);
+        });
+        const draw = spyOn(minimapElement.markers, "draw");
+        minimapElement.requestMarkerUpdate();
+        read();
+
+        minimapElement[lifecycle]();
+        // A callback copied out of the writer queue before disposal stays inert.
+        paint();
+
+        expect(cancelPaint).toHaveBeenCalledTimes(1);
+        expect(minimapElement.pendingMarkerUpdate).toBeNull();
+        expect(draw).not.toHaveBeenCalled();
+      });
+    }
+
+    it("does not schedule a marker write after destruction cancels its read", async () => {
+      await registerLayer({ name: "speclayer", getItems: () => [{ row: 2 }] });
+      await settle();
+      const { Disposable } = require("lumine");
+      let read;
+      spyOn(lumine.views, "readDocument").and.callFake((callback) => {
+        read = callback;
+        return new Disposable();
+      });
+      spyOn(lumine.views, "updateDocument");
+      minimapElement.requestMarkerUpdate();
+
+      minimapElement.destroy();
+      const writes = lumine.views.updateDocument.calls.count();
+      read();
+
+      expect(lumine.views.updateDocument.calls.count()).toBe(writes);
+      expect(minimapElement.pendingMarkerUpdate).toBeNull();
     });
 
     // The whole point of the contract: rows, not text-buffer markers.
