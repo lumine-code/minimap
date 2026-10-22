@@ -35,6 +35,43 @@ describe("StyleReader", () => {
   });
 
   describe("hasDOMStylesCacheChanged()", () => {
+    it("keeps editor-specific CSS independent while reusing each target's cached colors", () => {
+      const second = document.createElement("div");
+      target.className = "first-editor";
+      second.className = "second-editor";
+      jasmine.attachToDOM(second);
+      addStyleSheet(
+        ".first-editor .token { color: rgb(1, 2, 3); } .second-editor .token { color: rgb(4, 5, 6); }",
+      );
+      expect(styleReader.retrieveStyleFromDom(["token"], "color", target)).toBe("rgb(1, 2, 3)");
+      expect(styleReader.retrieveStyleFromDom(["token"], "color", second)).toBe("rgb(4, 5, 6)");
+      const compute = spyOn(styleReader, "computeStyleFromDom").and.callThrough();
+      for (let i = 0; i < 3; i++) {
+        expect(styleReader.retrieveStyleFromDom(["token"], "color", target)).toBe("rgb(1, 2, 3)");
+        expect(styleReader.retrieveStyleFromDom(["token"], "color", second)).toBe("rgb(4, 5, 6)");
+      }
+      expect(compute).not.toHaveBeenCalled();
+      expect(styleReader.hasDOMStylesCacheChanged()).toBe(false);
+    });
+
+    it("detects a restyle of another cached editor and restores the probe's current owner", () => {
+      const second = document.createElement("div");
+      second.className = "second-editor";
+      jasmine.attachToDOM(second);
+      addStyleSheet(
+        ".token { color: rgb(1, 2, 3); } .second-editor .token { color: rgb(4, 5, 6); }",
+      );
+      styleReader.retrieveStyleFromDom(["token"], "color", second);
+      styleReader.retrieveStyleFromDom(["token"], "color", target);
+      addStyleSheet(".second-editor .token { color: rgb(7, 8, 9); }");
+      expect(styleReader.hasDOMStylesCacheChanged()).toBe(true);
+      expect(styleReader.dummyNode.parentNode).toBe(target);
+      expect(styleReader.retrieveStyleFromDom(["token"], "color", second)).toBe("rgb(4, 5, 6)");
+      styleReader.invalidateDOMStylesCache();
+      expect(styleReader.retrieveStyleFromDom(["token"], "color", second)).toBe("rgb(7, 8, 9)");
+      expect(styleReader.retrieveStyleFromDom(["token"], "color", target)).toBe("rgb(1, 2, 3)");
+    });
+
     it("preserves compound classes and nested scope boundaries in lookups and restyle probes", () => {
       addStyleSheet(
         ".foo.bar > .baz { color: rgb(1, 2, 3); } .foo > .bar.baz { color: rgb(4, 5, 6); }",
