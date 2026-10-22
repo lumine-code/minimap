@@ -217,6 +217,48 @@ describe("minimap", () => {
       );
     });
 
+    it("does not rewrite unchanged canvas styles while the viewport moves", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      minimapElement.forceUpdateNow();
+      const canvas = minimapElement.tokensLayer.canvas;
+      const observer = new MutationObserver(() => {});
+      observer.observe(canvas, { attributes: true, attributeFilter: ["style"] });
+      try {
+        const previousTop = minimapElement.visibleArea.style.top;
+        for (const top of [20, 40, 60]) {
+          editorElement.setScrollTop(top);
+          minimapElement.update();
+        }
+        expect(observer.takeRecords().length).toBe(0);
+        expect(minimapElement.visibleArea.style.top).not.toBe(previousTop);
+      } finally {
+        observer.disconnect();
+      }
+    });
+
+    it("reconciles external inline changes and changed transforms after a cached update", async () => {
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      minimapElement.forceUpdateNow();
+      const canvas = minimapElement.tokensLayer.canvas;
+      const previous = canvas.style.cssText;
+      canvas.style.color = "red";
+      minimapElement.update();
+      expect(canvas.style.cssText).toBe(previous);
+      minimapElement.useHardwareAcceleration = !minimapElement.useHardwareAcceleration;
+      minimapElement.update();
+      expect(canvas.style.cssText).not.toBe(previous);
+      const observer = new MutationObserver(() => {});
+      observer.observe(canvas, { attributes: true, attributeFilter: ["style"] });
+      try {
+        minimapElement.update();
+        expect(observer.takeRecords().length).toBe(0);
+      } finally {
+        observer.disconnect();
+      }
+    });
+
     it("keeps deferred row edits out of geometry-only frames until their redraw delay expires", async () => {
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       await settle();
