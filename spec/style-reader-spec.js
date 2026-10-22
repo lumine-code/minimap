@@ -35,6 +35,37 @@ describe("StyleReader", () => {
   });
 
   describe("hasDOMStylesCacheChanged()", () => {
+    it("preserves compound classes and nested scope boundaries in lookups and restyle probes", () => {
+      addStyleSheet(
+        ".foo.bar > .baz { color: rgb(1, 2, 3); } .foo > .bar.baz { color: rgb(4, 5, 6); }",
+      );
+      expect(styleReader.retrieveStyleFromDom(["foo bar", "baz"], "color", target)).toBe(
+        "rgb(1, 2, 3)",
+      );
+      expect(styleReader.retrieveStyleFromDom(["foo", "bar baz"], "color", target)).toBe(
+        "rgb(4, 5, 6)",
+      );
+      expect(styleReader.hasDOMStylesCacheChanged()).toBe(false);
+      addStyleSheet(".foo.bar > .baz { color: rgb(7, 8, 9); }");
+      expect(styleReader.hasDOMStylesCacheChanged()).toBe(true);
+      expect(styleReader.retrieveStyleFromDom(["foo bar", "baz"], "color", target, false)).toBe(
+        "rgb(7, 8, 9)",
+      );
+      expect(styleReader.hasDOMStylesCacheChanged()).toBe(false);
+    });
+
+    it("keeps cached scope paths independent of a caller's array and clears every lookup on invalidation", () => {
+      addStyleSheet(".foo { color: rgb(1, 2, 3); } .bar { color: rgb(4, 5, 6); }");
+      const scopes = [".foo"];
+      styleReader.retrieveStyleFromDom(scopes, "color", target);
+      scopes[0] = ".bar";
+      expect(styleReader.retrieveStyleFromDom(scopes, "color", target)).toBe("rgb(4, 5, 6)");
+      expect(styleReader.hasDOMStylesCacheChanged()).toBe(false);
+      addStyleSheet(".foo { color: rgb(7, 8, 9); }");
+      styleReader.invalidateDOMStylesCache();
+      expect(styleReader.retrieveStyleFromDom([".foo"], "color", target)).toBe("rgb(7, 8, 9)");
+    });
+
     it("is false when nothing has been read yet", () => {
       expect(styleReader.hasDOMStylesCacheChanged()).toBe(false);
     });
