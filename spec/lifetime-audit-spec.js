@@ -1,4 +1,9 @@
 describe("Minimap runtime lifetime audit", () => {
+  // Processing fixtures use a real grammar; None deliberately disables this package.
+  beforeEach(async () => {
+    await lumine.packages.activatePackage("language-text");
+  });
+
   let main, editor, view, model, registries, leases, observed, toolkit, Registry;
   beforeEach(async () => {
     const workspace = lumine.views.getView(lumine.workspace);

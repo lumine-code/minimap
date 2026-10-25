@@ -1,6 +1,11 @@
 const { styleReader } = require("../lib/style-reader");
 
 describe("minimap", () => {
+  // Processing fixtures use a real grammar; None deliberately disables this package.
+  beforeEach(async () => {
+    await lumine.packages.activatePackage("language-text");
+  });
+
   let workspaceElement, editor, editorElement, mainModule, markerMain, minimap, minimapElement;
 
   function nextFrame() {
