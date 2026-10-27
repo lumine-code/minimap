@@ -647,6 +647,7 @@ describe("minimap", () => {
       spyOn(minimapElement.tokensLayer, "copyToOffscreen").and.callThrough();
       spyOn(minimapElement.markers, "draw").and.callThrough();
       spyOn(minimapElement, "requestUpdate").and.callThrough();
+      spyOn(minimapElement, "isVisible").and.throwError("No layout read in the paint phase");
 
       row = 5;
       layer.update();
