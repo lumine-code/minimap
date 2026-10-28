@@ -374,6 +374,34 @@ describe("minimap", () => {
       expect(Array.from(context.getImageData(0, 0, width, height).data)).toEqual(before);
     });
 
+    it("bounds token materialization to the canvas width on very long rows", async () => {
+      editor.setText("x".repeat(100000));
+      editor.update({ softWrapped: false, maxScreenLineLength: Infinity });
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      const original = editor.tokensForScreenRow.bind(editor);
+      const tokens = spyOn(editor, "tokensForScreenRow").and.callFake((row, options) => {
+        expect(Number.isFinite(options.maxColumns)).toBeTrue();
+        const result = original(row, options);
+        expect(result.reduce((length, token) => length + token.text.length, 0)).toBeLessThanOrEqual(
+          options.maxColumns,
+        );
+        return result;
+      });
+      const ratio = spyOn(minimap, "getDevicePixelRatio").and.returnValue(1);
+      for (const scale of [1, 1.5]) {
+        ratio.and.returnValue(scale);
+        minimapElement.updateCanvasesSize(minimapElement.width);
+        minimapElement.forceUpdateNow();
+        expect(tokens).toHaveBeenCalled();
+        const width = minimapElement.tokensLayer.getSize().width;
+        expect(tokens.calls.mostRecent().args[1].maxColumns).toBe(
+          Math.ceil(width / (minimap.getCharWidth() * scale)) + 1,
+        );
+        tokens.calls.reset();
+      }
+    });
+
     it("does not reset an unchanged canvas on a scaled display", async () => {
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       await settle();
