@@ -154,10 +154,13 @@ describe("Minimap runtime lifetime audit", () => {
     const probe = document.createElement("canvas");
     probe.width = probe.height = 1;
     const pixels = probe.getContext("2d");
-    pixels.fillStyle = context.fillStyle;
-    pixels.fillRect(0, 0, 1, 1);
-    const actual = Array.from(pixels.getImageData(0, 0, 1, 1).data);
-    pixels.clearRect(0, 0, 1, 1);
+    // Inspect the published pixels, whether they were drawn directly or copied
+    // from a retained tile. Context fillStyle is not the canvas's output.
+    const rendered = context.getImageData(0, 0, context.canvas.width, context.canvas.height).data;
+    let strongest = 0;
+    for (let i = 4; i < rendered.length; i += 4)
+      if (rendered[i + 3] > rendered[strongest + 3]) strongest = i;
+    const actual = Array.from(rendered.slice(strongest, strongest + 4));
     pixels.fillStyle = "rgba(20, 80, 140, 0.5)";
     pixels.fillRect(0, 0, 1, 1);
     expect(actual).toEqual(Array.from(pixels.getImageData(0, 0, 1, 1).data));

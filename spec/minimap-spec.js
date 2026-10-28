@@ -174,6 +174,44 @@ describe("minimap", () => {
   });
 
   describe("rendering", () => {
+    it("normalizes screen change batches and ignores offscreen color updates", async () => {
+      editor.setText("line\n".repeat(2000));
+      await until(() => minimapElement.isVisible(), "the minimap element to become visible");
+      await settle();
+      minimap.flushChanges();
+      minimapElement.forceUpdateNow();
+      minimapElement.drawLines.calls.reset();
+      const { Range } = require("lumine");
+      const changed = [];
+      const subscription = minimap.onDidChange((change) => changed.push(change));
+      const emit = (first, last) =>
+        editor.displayLayer.emitter.emit("did-change", [
+          {
+            oldRange: new Range([first, 0], [last, 0]),
+            newRange: new Range([first, 0], [last, 0]),
+            origin: "highlight",
+          },
+        ]);
+      try {
+        emit(1800, 1810);
+        minimap.flushChanges();
+        minimapElement.updateCanvas();
+        expect(changed).toEqual([{ start: 1800, end: 1810, screenDelta: 0, bufferDelta: 0 }]);
+        expect(minimapElement.drawLines).not.toHaveBeenCalled();
+        spyOn(editor, "tokensForScreenRow").and.callThrough();
+        emit(5, 6);
+        minimap.flushChanges();
+        minimapElement.updateCanvas();
+        expect(minimapElement.drawLines).toHaveBeenCalledTimes(1);
+        const rows = editor.tokensForScreenRow.calls.allArgs().map((args) => args[0]);
+        expect(rows).toContain(5);
+        expect(rows).not.toContain(0);
+        expect(rows).not.toContain(1800);
+      } finally {
+        subscription.dispose();
+      }
+    });
+
     it("is visible and sized within the editor", async () => {
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       expect(minimapElement.offsetWidth).toBeGreaterThan(0);
