@@ -260,6 +260,35 @@ describe("minimap", () => {
       );
     });
 
+    it("moves tokens and markers together through fractional rows without repainting", async () => {
+      editor.setText("row with content\n".repeat(1000));
+      await settle();
+      const scroll = spyOn(minimap, "getScrollTop").and.returnValue(30.25);
+      minimapElement.update();
+      spyOn(minimapElement.tokensLayer, "copyToOffscreen").and.callThrough();
+      spyOn(minimapElement.markers, "draw").and.callThrough();
+      const layer = minimapElement.tokensLayer.canvas.parentElement;
+      const origin = () => new DOMMatrix(getComputedStyle(layer).transform).m42;
+      const lineHeight = minimap.getLineHeight();
+      const firstRow = minimap.getFirstVisibleScreenRow();
+      expect(layer).not.toBe(minimapElement);
+      expect(minimapElement.markers.element.parentElement).toBe(layer);
+      expect(origin() - firstRow * lineHeight).toBeCloseTo(-30.25, 5);
+
+      scroll.and.returnValue(30.75);
+      minimapElement.update();
+      expect(origin() - firstRow * lineHeight).toBeCloseTo(-30.75, 5);
+      expect(minimapElement.tokensLayer.copyToOffscreen).not.toHaveBeenCalled();
+      expect(minimapElement.markers.draw).not.toHaveBeenCalled();
+
+      scroll.and.returnValue(30.25 + lineHeight);
+      minimapElement.update();
+      expect(origin() - minimap.getFirstVisibleScreenRow() * lineHeight).toBeCloseTo(
+        -30.25 - lineHeight,
+        5,
+      );
+    });
+
     it("does not rewrite unchanged canvas styles while the viewport moves", async () => {
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       await settle();
@@ -455,9 +484,69 @@ describe("minimap", () => {
 
       expect(minimap.setTextEditorScrollTop).toHaveBeenCalled();
     });
+
+    it("hit-tests the visible fraction of a canvas row after scrolling", async () => {
+      await settle();
+      const lineHeight = minimap.getLineHeight();
+      spyOn(minimap, "getScrollTop").and.returnValue(lineHeight * 10 + lineHeight * 0.75);
+      spyOn(minimap, "setTextEditorScrollTop");
+      const pixel = spyOn(editorElement, "pixelPositionForScreenPosition").and.callThrough();
+      minimapElement.canvasLeftMousePressed(
+        minimapElement.getBoundingClientRect().top + lineHeight * 0.5,
+      );
+      expect(pixel).toHaveBeenCalledWith([11, 0]);
+    });
   });
 
   describe("editor scroll metrics", () => {
+    it("keeps a leading block at the start of the overview", async () => {
+      const block = document.createElement("div");
+      block.style.height = "80px";
+      const marker = editor.markBufferPosition([0, 0]);
+      const decoration = editor.decorateMarker(marker, {
+        type: "block",
+        position: "before",
+        item: block,
+      });
+      try {
+        await settle();
+        editorElement.component.setScrollTop(40);
+        minimap.adapter.clearCache();
+        expect(minimap.adapter.getScrollTop()).toBe(0);
+      } finally {
+        decoration.destroy();
+        marker.destroy();
+      }
+    });
+
+    it("keeps block-aware scroll coordinates while the destination tile is not mounted", async () => {
+      editor.setText("row\n".repeat(1000));
+      const block = document.createElement("div");
+      block.style.height = "80px";
+      const marker = editor.markBufferPosition([0, 0]);
+      const decoration = editor.decorateMarker(marker, {
+        type: "block",
+        position: "before",
+        item: block,
+      });
+      try {
+        await settle();
+        const component = editorElement.component;
+        const lineHeight = editor.getLineHeightInPixels();
+        component.setScrollTop(component.pixelPositionAfterBlocksForRow(600) + 3.25);
+        expect(component.renderedScreenLineForRow(600)).toBeUndefined();
+        minimap.adapter.clearCache();
+        const beforePaint = minimap.adapter.getScrollTop();
+        component.updateSync();
+        minimap.adapter.clearCache();
+        expect(beforePaint).toBeCloseTo(600 * lineHeight + 3.25, 5);
+        expect(minimap.adapter.getScrollTop()).toBeCloseTo(beforePaint, 5);
+      } finally {
+        decoration.destroy();
+        marker.destroy();
+      }
+    });
+
     it("keeps block-aware vertical scroll reads independent of horizontal measurements", async () => {
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       const block = document.createElement("div");
@@ -728,6 +817,23 @@ describe("minimap", () => {
       expect(minimapElement.requestUpdate).not.toHaveBeenCalled();
       expect(minimapElement.drawLines).not.toHaveBeenCalled();
       expect(minimapElement.tokensLayer.copyToOffscreen).not.toHaveBeenCalled();
+    });
+
+    it("keeps a marker-only paint on the token origin until the next scroll frame", async () => {
+      await registerLayer({ name: "speclayer", getItems: () => [{ row: 2 }] });
+      await settle();
+      minimapElement.forceUpdateNow();
+      const firstRow = minimapElement.offscreenFirstRow;
+      const lastRow = minimapElement.offscreenLastRow;
+      spyOn(minimap, "getFirstVisibleScreenRow").and.returnValue(firstRow + 10);
+      spyOn(minimap, "getLastVisibleScreenRow").and.returnValue(lastRow + 10);
+      const draw = spyOn(minimapElement, "drawMarkers").and.callThrough();
+
+      minimapElement.requestMarkerUpdate();
+      lumine.views.performDocumentUpdate();
+
+      expect(draw).toHaveBeenCalledWith(firstRow, lastRow, minimap.getLineHeight());
+      expect(minimapElement.offscreenFirstRow).toBe(firstRow);
     });
 
     for (const lifecycle of ["disconnectedCallback", "adoptedCallback", "destroy"]) {

@@ -36,6 +36,11 @@ lumine-text-editor {
       border-left: none;
     }
 
+    .minimap-canvases {
+      position: absolute;
+      inset: 0;
+    }
+
     canvas {
       contain: layout paint style;
       position: absolute;
