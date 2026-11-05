@@ -14,6 +14,8 @@ A preview of the full source code.
 
 ![Navigate a long source file using the minimap.](.github/demo.png)
 
+![Resize the minimap from its edge on either side of the editor.](.github/demo-width.png)
+
 ## Installation
 
 To install `minimap` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/minimap`.

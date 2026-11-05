@@ -1,18 +1,18 @@
 {
   "title": "minimap",
   "description": "Navigate a long source file using the minimap.",
-  "recordedOn": "2026-10-30",
-  "sourceRevision": "6f18553eb050f80fd36cde8a2008e540dd962fde",
-  "themeSourceRevision": "130cea8d32452c7348a9f6f378cfe7d73e70b0fe",
+  "recordedOn": "2026-11-05",
+  "sourceRevision": "f5a280b7c4703219e63f030711a6b70663df8e01",
+  "themeSourceRevision": "6b65003c2906b3055fa8d69ffc36d199b1db87f2",
   "mode": "normal",
   "fontSettings": "default",
   "scenario": "demo.js",
-  "recipeHash": "7f908c533ecabe0e5411ef89e3e3fac81028fb981b6b5a8d1d2ee47d8c563100",
+  "recipeHash": "422239705403961cd6c338762ea65fc28e881663de792254dde1e29e055f3831",
   "environment": {
     "platform": "win32",
     "arch": "x64",
-    "electron": "45.0.0",
-    "chrome": "156.0.8078.48",
+    "electron": "45.2.3",
+    "chrome": "156.0.8078.80",
     "devicePixelRatio": 1,
     "locale": "en-GB",
     "fontFamily": "Fira Code, Menlo, DejaVu Sans Mono, Consolas, monospace",
@@ -24,295 +24,295 @@
   "privacy": { "version": 1, "location": "neutral", "textChecked": true },
   "sources": {
     "editor": {
-      "revision": "760329498d85e1294191a073d8a34a1706f4d14b",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "27e7cc484cb650eaa75f91f8883a5a27f4120eb7",
+      "dirty": true,
+      "workingTreeHash": "4c907c5b7f5ccd0ee398fa87369b97e1143a27708c794fecb0a7c3a1a2623d82"
     },
     "package": {
-      "revision": "6f18553eb050f80fd36cde8a2008e540dd962fde",
+      "revision": "f5a280b7c4703219e63f030711a6b70663df8e01",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "minimap": {
-      "revision": "6f18553eb050f80fd36cde8a2008e540dd962fde",
+      "revision": "f5a280b7c4703219e63f030711a6b70663df8e01",
       "dirty": false,
       "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
     },
     "about": {
-      "revision": "f02e12094c7f7f7503be7c6b124f544c79263a9b",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "2b99b5ccdc1f178dc0cb7df67d8bc1b50c581715",
+      "dirty": true,
+      "workingTreeHash": "5846c500cbab7b2b86e92bbffb2ad35a21ddcbe9ebb3518530324aa12522168c"
     },
     "background-tips": {
-      "revision": "5b826c4678154fefd7c0a5f673d7523e457af0b7",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "d83fe293e6d0ef89c36cf813a0fc4bc4714e185d",
+      "dirty": true,
+      "workingTreeHash": "ec23aececbf5e68bd0a78cea7b974d7fcfe11d4eba1aa10c8cdd4881a83207ce"
     },
     "breadcrumbs": {
-      "revision": "ca95e0c1f366a7dd70616f436c17c9481f1bd31f",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "3fad827d41a5a75bfc22cb19a50ad383a3e0bac3",
+      "dirty": true,
+      "workingTreeHash": "9578365284ab3da3d58669b305b45bd119e49adede8d67b4a10e6a51105eb96e"
     },
     "command-palette": {
-      "revision": "e4092eebd64f71b934ad48a9bbe543e6f6adf884",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "c20ce3786d854385a52b2d846231d89bf439b8d1",
+      "dirty": true,
+      "workingTreeHash": "d9330026fb9b9f5d082bf940a8e9a52475e46a64583128f7e7036ac4056280a3"
     },
     "deprecation-cop": {
-      "revision": "8b91d7e5e872a71f7509992b60c1a92701d13d51",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "1359ae12997144b6ffa1dca66650f4a39d71a65b",
+      "dirty": true,
+      "workingTreeHash": "5beca1e9b1cb1c74b2d522f18d316e5dbd5df6c90bccc1320dc3d98dbea943da"
     },
     "dev-live-reload": {
-      "revision": "02d1ec178f6a3ddcbe84ec6a4841e40b0359e849",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "7297d39f48b8a16501d9ef7fa6f0187916e74d4f",
+      "dirty": true,
+      "workingTreeHash": "4e0b85b24c231d361413832a6f989a03fe7e53dd6ef5736e6575cf10c3e4123c"
     },
     "encoding-selector": {
-      "revision": "cd3aa038a7e3a0c463a9190f71a4abc1beb539b3",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "d55565328532801860225e370d16575b2863bc97",
+      "dirty": true,
+      "workingTreeHash": "d61b94304da8a0b8f149feccd3fba5943d61646b26d7a0c3ba9efc17667667b3"
     },
-    "git-diff": {
-      "revision": "0bf61b6661ba27e0f90ed1f5dd2094e35249bfce",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    "git-chunk": {
+      "revision": "8f7459788d5241e4bcedcffa3d7a0771577ae603",
+      "dirty": true,
+      "workingTreeHash": "93c885813f12a0464290b580fd7b9de2c858aac234587dbc4203bbd90dc4214b"
     },
     "go-to-line": {
-      "revision": "7d0a125d9630c3c7a12fbb20ec0979d973fc7c4a",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "075175700079d75095831c2a74d088821eb09325",
+      "dirty": true,
+      "workingTreeHash": "8c45917521cdafb15d8a517460f4474b50c6b54fa0fe147511cfc4638d141306"
     },
     "grammar-selector": {
-      "revision": "4f7ba124a7b55d55d17d479cae2d752d1cfe9d78",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "ac08cdf7ec118883e76744b5310b256ecdacdeae",
+      "dirty": true,
+      "workingTreeHash": "05f7ae069a4ee92db78d3c46f9f68ca411ac6849eb957782a8dde7726217097a"
     },
     "incompatible-packages": {
-      "revision": "b68b8f71c4cd89ab3a569c66cf388731bc3631a8",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "8bc775df7a3dc844752a96f26ff3b43d1af71729",
+      "dirty": true,
+      "workingTreeHash": "fc77fe0835bf7b5c0e1728c46cabe68e7aae85db0233903352ebfae6a8d2577d"
     },
     "keybinding-resolver": {
-      "revision": "cd43e9ca86f8d62f2db8f711911a42c97ada65c1",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "001cb120b2487cffee6954cac342b68ff72a29af",
+      "dirty": true,
+      "workingTreeHash": "11c30f335f4f13f471210730eb0b55916da84937e48e741d1e02ae64c3dbfc8d"
     },
     "language-c": {
-      "revision": "2d09ea283c5cb1cfd9fa04f23d4c0b1205b091ee",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "2401c15c6ff403bb216232458b3b408703c204d0",
+      "dirty": true,
+      "workingTreeHash": "07cd306e40d19401e6c3bc5db9f3f92539c131a5a24851d19a9aad9680a14ead"
     },
     "language-css": {
-      "revision": "6b7b89e632119fc602f0757081c4f078d06328d0",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "b1064c5e681c012beaee767ca9597377621f5f28",
+      "dirty": true,
+      "workingTreeHash": "bd3072e4d2b93e3ea9fcfff060f582eb45c509393e93b7a3cb3f6641b3df9633"
     },
     "language-csv": {
-      "revision": "7abdc6f06aeab61da125ffac2d3880acd864296f",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "cf9aab5b1f3d013e7e114663ef9564b8062c142a",
+      "dirty": true,
+      "workingTreeHash": "ae3f3d6b90db8863f444c59468473aa6fbd7a5903152f9e51a53623810e4221f"
     },
     "language-diff": {
-      "revision": "7c413668916cb14cb46e91fe465c2457218bbcc5",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "b7114e419899a37d71a9dff755753895c7009faf",
+      "dirty": true,
+      "workingTreeHash": "09f4800ff4cb8b69fdec52d58f3eb7c85a5d46f052cad7754702d0307741e0e8"
     },
     "language-gfm": {
-      "revision": "e2eca2b15d854161c670e5b8815ad48e636957b7",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "077cbde00deb03e9e59a8d7a6865ae2167e2d182",
+      "dirty": true,
+      "workingTreeHash": "5c9989c42167eb1e41f208934e811dfaf8904f257fcf5470cc3dbadbfc1b45f6"
     },
     "language-git": {
-      "revision": "3d3a639abf06fcd9574a75057ce109e63210ef8b",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "0f989820366bc6cc9ae4c31f472b981fd7a6e07f",
+      "dirty": true,
+      "workingTreeHash": "513c03eaf70f6990dd152d3e60b9b8decc5ffed9fff8c5fee3f329644f46844f"
     },
     "language-html": {
-      "revision": "a7e620a517668d8e46a39fbced344bbb304e12a7",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "017c724acbe642f4c5d4c55c83dd824073061ebd",
+      "dirty": true,
+      "workingTreeHash": "d73d921a86b0f91574099f1a64ad4ee05cbc251f3299071101a145f3a3a071cd"
     },
     "language-hyperlink": {
-      "revision": "03ec30fd38ee531aa41a90130d8eece322ba0963",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "dd3ffa709e95a26e2db4190034955e1685d1ffd7",
+      "dirty": true,
+      "workingTreeHash": "bdfb8c0ff41659661eade1a486793ae91cc8a3b85d6b8eb15849090220c37128"
     },
     "language-ipython": {
-      "revision": "aa582a52b51fa32240d36412abcca60fd0629583",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "3d23f89876c59cd4699e649c9d6cb92f6555cd7c",
+      "dirty": true,
+      "workingTreeHash": "b87921ee93103d4237dac492a625b9f0efc7f24f1b701ade3c6652fffb8eadf7"
     },
     "language-javascript": {
-      "revision": "bf635d04bbf9cf42239552df5455644c59b64b06",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "14bdc4a0d4f52dee4899ca43abf0658467787329",
+      "dirty": true,
+      "workingTreeHash": "8ed96fa6a47a142ba0d6505584462cf5446a5cef5bd5ad9fd01e990e8860fe8d"
     },
     "language-json": {
-      "revision": "e5e1da96992248d41fad70d2667da4e57aa6fa9d",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "60145093a93147706a2b2ca5e79c0c7c32ad867d",
+      "dirty": true,
+      "workingTreeHash": "061ad9ba3b9248bcafde54354dac58badd5ccc9ebc81af9fcdd215dd58f85298"
     },
     "language-log": {
-      "revision": "326ef9201581d76efba5d05a160c6ecc654e294d",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "83b7da3924ec1ace0533df8626b3b2885ab45b05",
+      "dirty": true,
+      "workingTreeHash": "63a155d5a3df92067f5be1191b30efb57bb2b241e2864a884a64f068393b3286"
     },
     "language-powershell": {
-      "revision": "6ed31a595716b3fe64fad9b31caedb77a99ce20e",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "4d13d274ec318fb55b7a7b5881d38c9d5cb2101a",
+      "dirty": true,
+      "workingTreeHash": "cf462b3bfacbc714339b44f90f7189bdc4d0fb71028ea8816b2b4b17c2695e61"
     },
     "language-python": {
-      "revision": "413b30e96e3bb63714958c3e3edeca338b0551aa",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "31c3685241dfdf646a0f5b7fc54333d6b31682a9",
+      "dirty": true,
+      "workingTreeHash": "419fee2c0376b91d27df632ff7dac0464de134d780d39294a407d2677607740a"
     },
     "language-regex": {
-      "revision": "3b69da21fc49671442998bc95a0050672694c9d7",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "ae370b05eedb2c00268811b5006ec33cf955b91c",
+      "dirty": true,
+      "workingTreeHash": "f2e8df7997a706455bb3d866870b13bee74a4758245fc8ee129d8a42da621406"
     },
     "language-shellscript": {
-      "revision": "d640fa9c50340b1ce2d7d67b75fd0c1a6e59cc2e",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "e4d9d558edf5e68f7395b39fb193291408de9764",
+      "dirty": true,
+      "workingTreeHash": "f40ee1f16134b75953844ea0602c7339a7f67e92139bbaa252077275f10a607d"
     },
     "language-source": {
-      "revision": "7fb4dd62a41aaec6a5122c6e51339e60c6b2b032",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "762a5e2c3373ea102670c3df0ae2fb8da55136c0",
+      "dirty": true,
+      "workingTreeHash": "0db9895b49ddcd8ffd8ffe649a99332ababb06164d4a35a331e8cf31090d06fd"
     },
     "language-sql": {
-      "revision": "e54209763701ec8cbc6f4eb508de9069d743af0e",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "69598a74f9e0bd8ad939f90375540c4175ad4526",
+      "dirty": true,
+      "workingTreeHash": "8000506d602d138a66b7f77e5e1d9a0118a1441963e707ad3a4a0b3e705bdbd7"
     },
     "language-text": {
-      "revision": "d64e4a2f0dd6f177148513f927fddec588d37669",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "6853bb0e779acb0cb9d66dbeb06698ea876ca4be",
+      "dirty": true,
+      "workingTreeHash": "89ceb8ae4ad9b4b4f9b4e870bea2303e327d19231232623a907038bba66dea8a"
     },
     "language-todo": {
-      "revision": "1dbc7d8be27b0b273c7aa46b73d6d463757c7c31",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "0d69605374c0a41cdac560d14ed3506f6d641078",
+      "dirty": true,
+      "workingTreeHash": "e29baa8fa13c6868dfc893e81658a929a2017b98d5c87d9fe4d8cc2bf6ec384f"
     },
     "language-toml": {
-      "revision": "6e29e4ac7ec35301e161765aa2d7cba844fa3f79",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "a39204df0bb9a084fe646b0e4fb3b1ee1618cab8",
+      "dirty": true,
+      "workingTreeHash": "c6eee86c53282146854a15ebd0bc2ecbc18ee066a0423ebccd8ee1ceffa017f0"
     },
     "language-typescript": {
-      "revision": "1270c17404d5f6fd43a86ad760c2102e0dff6226",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "bff33715e7249b70cd9aaeaa781a86b210e6bbfe",
+      "dirty": true,
+      "workingTreeHash": "88c2059bb80af490f5375a4b7c941be0db05c85e8a2ce369d01f2c2f8b07905a"
     },
     "language-xml": {
-      "revision": "0dc470ea089dc0ccc0e844fdae289cf2dee32b09",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "685da2dbaf92ce41646a6ad9ec4e3f6fc7c78da6",
+      "dirty": true,
+      "workingTreeHash": "4cf7716e633e59e9f7d7aff31dc98370a20199f810e98468352a52dc07ae5952"
     },
     "language-yaml": {
-      "revision": "952460e4fe892d8361c9b236d4bf1be27105a5fa",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "2ac27ec9dbbaacf1a817736cae445dcd4fc7b587",
+      "dirty": true,
+      "workingTreeHash": "d167e941b5f03618fe831d720226396acf17388d145bb5def6e4bcd2723cbb9b"
     },
     "launcher": {
-      "revision": "052dc2786b548598028164567929a7818995fa74",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "77a482ef057599b49c9fc5614aec0bb82404f099",
+      "dirty": true,
+      "workingTreeHash": "b3bfc1016cd6d59cbbd614910a00efdd7636d33498acba1df9cc4d18e148441d"
     },
     "line-ending": {
-      "revision": "b18de17984092836aa30930fc760a6d35f06785d",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "2801c63b8138c9f2e4b2a355621c4484076b1280",
+      "dirty": true,
+      "workingTreeHash": "a3dde198e8d4e834f8644a8f0d9d8c594171db8660f123aa99d90f986ce99667"
     },
     "lumine-updater": {
-      "revision": "8af3ccec532efe64f064c0a38edb4c7f3a5c6b75",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "eb62128ef75d3338196bae9f19cef16a6a359ac4",
+      "dirty": true,
+      "workingTreeHash": "87ba3f1090c959ba93406f9cc6ae6b8fb3f5efe280b782dee055420fcd26bfb5"
     },
     "marker": {
-      "revision": "7f788e69e72ce8c3eefd8b3ef251e43c18a61018",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "079726ac21ed8266967886a693f5e93faf4faa90",
+      "dirty": true,
+      "workingTreeHash": "1131163e20dd35b14f7a790ebe20d7f8fbbd83dfdcedad3c45685ddf804b5096"
     },
     "metadata": {
-      "revision": "709dcaa0f28995f6d14ae9a3c09fc8147093ac50",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "64620b64dbd529c47aad7f4aca8e52c05d33da90",
+      "dirty": true,
+      "workingTreeHash": "d8b8dc772f54ac3db986a4e5c905f1e97da128afd1e084a3968ca608b24a2386"
     },
     "notifications": {
-      "revision": "b3f6288191f15153e2c53b33152abe45f5b657bc",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "82fad59c63a43dbf6cdb0adb5d3d8cb3f7e2364d",
+      "dirty": true,
+      "workingTreeHash": "e70d619606fd76a1658b61b5eacc26d788c3a73a542d8257bd0fbaf9eb7f60f9"
     },
     "one-theme": {
-      "revision": "130cea8d32452c7348a9f6f378cfe7d73e70b0fe",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "6b65003c2906b3055fa8d69ffc36d199b1db87f2",
+      "dirty": true,
+      "workingTreeHash": "cc144d940e8602a47a6a2cd61364fe0c89f1746d4bc207958bc5d7bb00fe8531"
     },
     "search-panel": {
-      "revision": "b8766bf32d8b171ca903b053473e3eede8d5c4e3",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "4e3bf998fc0707b4c2f67b3f89228d216454f9cd",
+      "dirty": true,
+      "workingTreeHash": "e1ba97cce16ee6751abdf374a5f5a195da9359339fc5c6e3dd490cb072214b59"
     },
     "settings-view": {
-      "revision": "89d1f6e16befae710f2467c011299edc5b259092",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "684ba233aa7f4beeb027403ca0c2546a040b39e9",
+      "dirty": true,
+      "workingTreeHash": "0033a65c6e5ac22554434dfd879b9944bbb89de5dfa288c34bb21c30bf787957"
     },
     "snippets": {
-      "revision": "04a034092a1a94a5fa633ea27deb6d6f2a60a42f",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "ffa48d27135488a5c7d24dafa853dbbebbe50a4a",
+      "dirty": true,
+      "workingTreeHash": "0aa991d90da3a471045efc9a935cb3f8b9f86b63fc2f9f5f45a7f376b3eb6bff"
     },
     "status-bar": {
-      "revision": "b72fc1d7c451a76052102e3182c1a467ebc0cdc1",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "bed3120b54f118e4d3b7ab843afb4e9d54fb6729",
+      "dirty": true,
+      "workingTreeHash": "f6a82d2c6dd526bac43a5c9e25048009c6f6dd9e88d6cf654ef8d117e0e2d503"
     },
     "styleguide": {
-      "revision": "68fdb9d0137acc4250a1e3f012d41652ae01c2ad",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "0d2cb74fa471b54431c780d5f967dce529bf3f1f",
+      "dirty": true,
+      "workingTreeHash": "522ba14cb97d42c75bb7589e846acb8c8e60f9191be70b8be8212da86aef6525"
     },
     "tabs": {
-      "revision": "8877a6c31eab7c6406aad7509372b7a16f4508bf",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "bd86ebd4fa4c19bd3a2d6589879488c80c477f67",
+      "dirty": true,
+      "workingTreeHash": "fabaeff48d6e6b32d765fcc43f5b6282c71d5f8ffced3c86a233c962901f5b9e"
     },
     "timecop": {
-      "revision": "91a82e0e7c0994768be61ccb109ada274332976e",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "b9ca75bae4fce5a5784a0ab2559c07a5f6d1cf12",
+      "dirty": true,
+      "workingTreeHash": "a8bbf745f1af33942eadfe782db281a7b2a72e4db4069942757cc8cd56a5dfc7"
     },
     "title-bar": {
-      "revision": "ff2b867c23dce3ebc6b7229af2706bfa44cfe822",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "81391c6865fd4a47db93a76998eedb2175d1bd61",
+      "dirty": true,
+      "workingTreeHash": "a71a4c1e7d7453ae02bf0eb01da1bb2808fc153741478d999ffc7532f9385f5c"
     },
     "tree-view": {
-      "revision": "dbfcbfc0eeff05d18253e43b6610307facd32b04",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "840b09639917852d55508f2a307af5a7d833622c",
+      "dirty": true,
+      "workingTreeHash": "d6a8311d3b11a2e5b31ccccc8570dab5ce75123825fa3cc1d231f9b2a2514efe"
     },
     "whitespace": {
-      "revision": "52e0398553e630ef0bb8b6a4d57b71ce0aa418ad",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "926b7312f1d8b7344250f33e7d5fc52dccfe16a4",
+      "dirty": true,
+      "workingTreeHash": "3659cece892a2b81ec06ad570ae8eea896438ed7c6375696d3489231645c517a"
     },
     "window-title": {
-      "revision": "55c79de0ce72a58afbc7484f32f4d685e902f22d",
-      "dirty": false,
-      "workingTreeHash": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      "revision": "da14d110cf361b395053cef03abb5ce04fb8dc12",
+      "dirty": true,
+      "workingTreeHash": "922cc12eaceff8b2266df39f4d343e4729144296dd4e47ac054781a10618832f"
     }
   },
   "fixtures": [
     {
       "file": "Signal Lab/data/samples.csv",
-      "sha256": "e2aa09f6b3c71550bde2fb40e568843cb5a81b35431d168a2b5f70124dabbed9"
+      "sha256": "2d35e3bb79e7e9086de59900ceef8f1eea104bfc4ad0de99236dba1f341e4719"
     },
     {
       "file": "Signal Lab/docs/experiments.md",
@@ -337,7 +337,14 @@
       "label": "Navigate a long source file using the minimap.",
       "width": 1200,
       "height": 760,
-      "sha256": "1faa3055d3b5d0c6eed4a42c482cf81cba75be2c74d851eef44b86fd34fad122"
+      "sha256": "bb1f933bfbb587a1e0b9a13c50891f3d3e47b99734e697179ab90d08a70f2f88"
+    },
+    {
+      "file": "demo-width.png",
+      "label": "Resize the minimap from its edge on either side of the editor.",
+      "width": 1200,
+      "height": 760,
+      "sha256": "bfb11f2fe4add519d08f001e17570237d18fa9866fe536f5494bdaa88853a3b8"
     }
   ]
 }
