@@ -136,8 +136,10 @@ describe("minimap", () => {
       await until(() => findMinimapElement(), "the minimap element to re-attach");
 
       await until(
-        () => component.getClientContainerWidth() < fullWidth,
-        "the editor to re-measure around the minimap",
+        () =>
+          component.getClientContainerWidth() < fullWidth &&
+          component.getClientContainerWidth() === clientContainerWidth(component),
+        "the editor to settle around the minimap",
       );
       expect(component.getClientContainerWidth()).toBe(clientContainerWidth(component));
     });
@@ -405,7 +407,7 @@ describe("minimap", () => {
 
     it("bounds token materialization to the canvas width on very long rows", async () => {
       editor.setText("x".repeat(100000));
-      editor.update({ softWrapped: false, maxScreenLineLength: Infinity });
+      editor.update({ softWrapped: false, unwrappedLineLengthLimit: Infinity });
       await until(() => minimapElement.isVisible(), "the minimap element to become visible");
       await settle();
       const original = editor.tokensForScreenRow.bind(editor);
@@ -736,6 +738,51 @@ describe("minimap", () => {
 
       lumine.config.set("minimap.charHeight", 5);
       expect(changeSpy).toHaveBeenCalled();
+    });
+
+    it("caps its width at the model's wrap column independently of preferred line length", async () => {
+      lumine.config.set("editor.softWrap", false);
+      await editor.update({ softWrapped: true, softWrapMinColumn: 30, softWrapMaxColumn: 30 });
+      await until(() => minimapElement.flexBasis === 30 * minimap.getCharWidth(), "the wrap cap");
+
+      expect(lumine.config.get("editor.softWrap")).toBe(false);
+      expect(editor.getSoftWrapColumn()).toBe(30);
+      lumine.config.set("editor.preferredLineLength", 120);
+      expect(minimapElement.flexBasis).toBe(30 * minimap.getCharWidth());
+
+      await editor.update({ softWrapMinColumn: 40, softWrapMaxColumn: 40 });
+      await until(
+        () => minimapElement.flexBasis === 40 * minimap.getCharWidth(),
+        "the changed wrap cap",
+      );
+    });
+
+    it("updates its width as viewport wrapping changes with the editor width", async () => {
+      lumine.config.set("minimap.charWidth", 0.5);
+      await editor.update({ softWrapped: true, softWrapMinColumn: 0, softWrapMaxColumn: 0 });
+      await until(
+        () => minimapElement.flexBasis === editor.getSoftWrapColumn() * minimap.getCharWidth(),
+        "the initial viewport wrap cap",
+      );
+      await settle();
+      const initialColumn = editor.getSoftWrapColumn();
+
+      workspaceElement.style.width = "400px";
+      await until(
+        () =>
+          editor.getSoftWrapColumn() < initialColumn &&
+          minimapElement.flexBasis === editor.getSoftWrapColumn() * minimap.getCharWidth(),
+        "the narrower viewport wrap cap",
+      );
+    });
+
+    it("does not cap unwrapped editors at their safety boundary", async () => {
+      await editor.update({ softWrapped: true, softWrapMinColumn: 30, softWrapMaxColumn: 30 });
+      await until(() => minimapElement.flexBasis === 30 * minimap.getCharWidth(), "the wrap cap");
+
+      await editor.update({ softWrapped: false, unwrappedLineLengthLimit: 30 });
+      await until(() => minimapElement.flexBasis == null, "the unwrapped minimap width");
+      expect(editor.getSoftWrapColumn()).toBe(30);
     });
   });
 

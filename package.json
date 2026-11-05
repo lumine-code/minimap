@@ -65,7 +65,7 @@
     },
     "adjustMinimapWidthToSoftWrap": {
       "title": "Adjust Minimap Width To Soft Wrap",
-      "description": "When soft wrap and soft wrap at preferred line length are both enabled, cap the minimap width to match the preferred line length.",
+      "description": "When soft wrap is enabled, cap the minimap width to match the editor's actual wrap column, including its minimum and maximum limits.",
       "type": "boolean",
       "default": true
     },
