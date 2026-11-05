@@ -63,11 +63,12 @@
       "minimum": 0,
       "default": 1
     },
-    "adjustMinimapWidthToSoftWrap": {
-      "title": "Adjust Minimap Width To Soft Wrap",
-      "description": "When soft wrap is enabled, cap the minimap width to match the editor's actual wrap column, including its minimum and maximum limits.",
-      "type": "boolean",
-      "default": true
+    "width": {
+      "title": "Width",
+      "description": "Fixed width of the minimap in pixels, independent of the editor width, line lengths and soft wrap settings. Drag its edge next to the editor to resize and save a new width.",
+      "type": "integer",
+      "minimum": 1,
+      "default": 120
     },
     "charWidth": {
       "title": "Character Width",

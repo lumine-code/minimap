@@ -32,6 +32,28 @@ describe("minimap in editor windows", () => {
     const frame = spyOn(nativeWindow, "requestAnimationFrame").and.callThrough();
     view.requestForcedUpdate();
     expect(frame).toHaveBeenCalled();
+    const resizeEdge = view.getBoundingClientRect().left;
+    const initialWidth = lumine.config.get("minimap.width");
+    const resizePointer = (target, type, x, buttons = 1) =>
+      target.dispatchEvent(
+        new nativeWindow.PointerEvent(type, {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 7,
+          isPrimary: true,
+          button: 0,
+          buttons,
+          clientX: x,
+        }),
+      );
+    resizePointer(view.resizeHandle, "pointerdown", resizeEdge);
+    expect(view.widthResize.window).toBe(nativeWindow);
+    resizePointer(extra.getDocument(), "pointermove", resizeEdge - 20);
+    await conditionPromise(() => view.offsetWidth === initialWidth + 20);
+    expect(lumine.config.get("minimap.width")).toBe(initialWidth);
+    resizePointer(extra.getDocument(), "pointerup", resizeEdge - 20, 0);
+    expect(lumine.config.get("minimap.width")).toBe(initialWidth + 20);
+    expect(view.widthResize).toBeNull();
     const drag = spyOn(view, "drag");
     view.startDrag({ y: 10, isLeftMouse: true });
     extra

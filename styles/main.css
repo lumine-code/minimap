@@ -7,8 +7,8 @@ lumine-text-editor[with-minimap] {
 
   > div {
     order: 2;
-    flex: 1 0 90%;
-    width: 90%;
+    flex: 1 1 0;
+    min-width: 0;
   }
 }
 
@@ -27,13 +27,38 @@ lumine-text-editor {
     cursor: default;
     height: 100%;
     order: 3;
-    width: 10%;
-    flex: 0 0 10%;
+    width: var(--minimap-width, 120px);
+    flex: 0 0 var(--minimap-width, 120px);
     border-left: 1px solid var(--base-border-color);
 
     &.left {
       order: 1;
       border-left: none;
+    }
+
+    .minimap-resize-handle {
+      position: absolute;
+      z-index: 5;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 6px;
+      cursor: col-resize;
+      touch-action: none;
+
+      &:hover,
+      &:focus-visible {
+        background-color: var(--base-border-color);
+      }
+    }
+
+    &.left .minimap-resize-handle {
+      right: 0;
+      left: auto;
+    }
+
+    &.resizing .minimap-resize-handle {
+      background-color: var(--base-border-color);
     }
 
     .minimap-canvases {

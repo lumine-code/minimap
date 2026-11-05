@@ -64,6 +64,31 @@ module.exports = {
         );
       },
     },
+    {
+      id: "resize-width",
+      file: "demo-width.png",
+      caption: "Resize the minimap from its edge on either side of the editor.",
+      async run({ lumine }) {
+        lumine.config.set("minimap.width", 120);
+        lumine.config.set("minimap.displayMinimapOnLeft", true);
+      },
+      drag({ state }) {
+        const minimap = state.editor.getElement().querySelector("lumine-text-editor-minimap");
+        const bounds = minimap.resizeHandle.getBoundingClientRect();
+        const x = bounds.left + bounds.width / 2;
+        const y = bounds.top + bounds.height / 2;
+        return [x, y, x + 60, y];
+      },
+      ready({ lumine, state }) {
+        const minimap = state.editor.getElement().querySelector("lumine-text-editor-minimap");
+        return Boolean(
+          lumine.config.get("minimap.width") === 180 &&
+          minimap?.classList.contains("left") &&
+          minimap.offsetWidth === 180 &&
+          hasVisibleCanvasPixels(minimap.getFrontCanvas()),
+        );
+      },
+    },
   ],
   async cleanup() {},
 };

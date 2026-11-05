@@ -740,49 +740,173 @@ describe("minimap", () => {
       expect(changeSpy).toHaveBeenCalled();
     });
 
-    it("caps its width at the model's wrap column independently of preferred line length", async () => {
-      lumine.config.set("editor.softWrap", false);
-      await editor.update({ softWrapped: true, softWrapMinColumn: 30, softWrapMaxColumn: 30 });
-      await until(() => minimapElement.flexBasis === 30 * minimap.getCharWidth(), "the wrap cap");
-
-      expect(lumine.config.get("editor.softWrap")).toBe(false);
-      expect(editor.getSoftWrapColumn()).toBe(30);
-      lumine.config.set("editor.preferredLineLength", 120);
-      expect(minimapElement.flexBasis).toBe(30 * minimap.getCharWidth());
-
-      await editor.update({ softWrapMinColumn: 40, softWrapMaxColumn: 40 });
-      await until(
-        () => minimapElement.flexBasis === 40 * minimap.getCharWidth(),
-        "the changed wrap cap",
-      );
-    });
-
-    it("updates its width as viewport wrapping changes with the editor width", async () => {
-      lumine.config.set("minimap.charWidth", 0.5);
-      await editor.update({ softWrapped: true, softWrapMinColumn: 0, softWrapMaxColumn: 0 });
-      await until(
-        () => minimapElement.flexBasis === editor.getSoftWrapColumn() * minimap.getCharWidth(),
-        "the initial viewport wrap cap",
-      );
-      await settle();
-      const initialColumn = editor.getSoftWrapColumn();
-
-      workspaceElement.style.width = "400px";
+    it("applies the configured pixel width and gives the remaining space to the editor", async () => {
+      lumine.config.set("minimap.width", 90);
       await until(
         () =>
-          editor.getSoftWrapColumn() < initialColumn &&
-          minimapElement.flexBasis === editor.getSoftWrapColumn() * minimap.getCharWidth(),
-        "the narrower viewport wrap cap",
+          minimapElement.offsetWidth === 90 &&
+          editorElement.component.getClientContainerWidth() ===
+            clientContainerWidth(editorElement.component),
+        "the narrower fixed minimap width",
+      );
+      const initialEditorWidth = clientContainerWidth(editorElement.component);
+      expect(minimap.getScreenWidth()).toBe(minimapElement.clientWidth);
+
+      lumine.config.set("minimap.width", 160);
+      await until(
+        () =>
+          minimapElement.offsetWidth === 160 &&
+          editorElement.component.getClientContainerWidth() ===
+            clientContainerWidth(editorElement.component),
+        "the wider fixed minimap width",
+      );
+      expect(clientContainerWidth(editorElement.component)).toBe(initialEditorWidth - 70);
+      expect(minimapElement.tokensLayer.getSize().width).toBe(
+        Math.trunc(minimapElement.clientWidth * minimap.getDevicePixelRatio()),
       );
     });
 
-    it("does not cap unwrapped editors at their safety boundary", async () => {
-      await editor.update({ softWrapped: true, softWrapMinColumn: 30, softWrapMaxColumn: 30 });
-      await until(() => minimapElement.flexBasis === 30 * minimap.getCharWidth(), "the wrap cap");
+    it("keeps its fixed width across soft wrap policies and line-length changes", async () => {
+      lumine.config.set("minimap.width", 100);
+      await until(() => minimapElement.offsetWidth === 100, "the fixed minimap width");
+      for (const policy of [
+        { softWrapped: true, softWrapMinColumn: 0, softWrapMaxColumn: 0 },
+        { softWrapped: true, softWrapMinColumn: 30, softWrapMaxColumn: 30 },
+        { softWrapped: true, softWrapMinColumn: 90, softWrapMaxColumn: 60 },
+        { softWrapped: false, unwrappedLineLengthLimit: 30 },
+      ]) {
+        await editor.update(policy);
+        await settle();
+        expect(minimapElement.offsetWidth).toBe(100);
+      }
 
-      await editor.update({ softWrapped: false, unwrappedLineLengthLimit: 30 });
-      await until(() => minimapElement.flexBasis == null, "the unwrapped minimap width");
-      expect(editor.getSoftWrapColumn()).toBe(30);
+      lumine.config.set("editor.preferredLineLength", 20);
+      editor.setText("a long source line ".repeat(100));
+      await settle();
+      expect(minimapElement.offsetWidth).toBe(100);
+      editor.setText("short");
+      await settle();
+      expect(minimapElement.offsetWidth).toBe(100);
+    });
+
+    it("keeps its pixel width when the pane and character size change", async () => {
+      lumine.config.set("minimap.width", 100);
+      await until(() => minimapElement.offsetWidth === 100, "the fixed minimap width");
+      workspaceElement.style.width = "400px";
+      lumine.config.set("minimap.charWidth", 0.5);
+      await settle();
+      expect(minimapElement.offsetWidth).toBe(100);
+
+      workspaceElement.style.width = "1000px";
+      lumine.config.set("minimap.charWidth", 2);
+      await settle();
+      expect(minimapElement.offsetWidth).toBe(100);
+    });
+  });
+
+  describe("resizing its width", () => {
+    function pointer(target, type, x, buttons = 1) {
+      const document = target.ownerDocument ?? target;
+      target.dispatchEvent(
+        new document.defaultView.PointerEvent(type, {
+          bubbles: true,
+          cancelable: true,
+          pointerId: 7,
+          isPrimary: true,
+          button: 0,
+          buttons,
+          clientX: x,
+        }),
+      );
+    }
+
+    beforeEach(async () => {
+      lumine.config.set("minimap.width", 120);
+      await until(() => minimapElement.offsetWidth === 120, "the initial minimap width");
+    });
+
+    for (const left of [false, true]) {
+      it(`drags the editor-facing edge on the ${left ? "left" : "right"} and saves only the final width`, async () => {
+        lumine.config.set("minimap.displayMinimapOnLeft", left);
+        const handle = minimapElement.resizeHandle;
+        const bounds = minimapElement.getBoundingClientRect();
+        const edge = left ? bounds.right : bounds.left;
+        const finalX = edge + (left ? 45 : -45);
+        const layout = spyOn(lumine.workspace, "beginLayoutDrag").and.callThrough();
+        pointer(handle, "pointerdown", edge);
+        expect(layout).toHaveBeenCalledTimes(1);
+        const dispose = spyOn(layout.calls.mostRecent().returnValue, "dispose").and.callThrough();
+        pointer(document, "pointermove", finalX);
+        await until(() => minimapElement.offsetWidth === 165, "the dragged minimap width");
+        expect(lumine.config.get("minimap.width")).toBe(120);
+        expect(handle.getAttribute("aria-valuenow")).toBe("165");
+
+        pointer(document, "pointerup", finalX, 0);
+        expect(lumine.config.get("minimap.width")).toBe(165);
+        expect(minimapElement.widthResize).toBeNull();
+        expect(dispose).toHaveBeenCalledTimes(1);
+      });
+
+      it(`resizes the ${left ? "left" : "right"} minimap with the focused separator`, () => {
+        lumine.config.set("minimap.displayMinimapOnLeft", left);
+        const handle = minimapElement.resizeHandle;
+        expect(handle.getAttribute("role")).toBe("separator");
+        expect(handle.getAttribute("aria-orientation")).toBe("vertical");
+        handle.dispatchEvent(
+          new KeyboardEvent("keydown", {
+            bubbles: true,
+            key: left ? "ArrowRight" : "ArrowLeft",
+          }),
+        );
+        expect(lumine.config.get("minimap.width")).toBe(130);
+        expect(handle.getAttribute("aria-valuenow")).toBe("130");
+      });
+    }
+
+    for (const cancellation of [
+      "pointercancel",
+      "Escape",
+      "lostpointercapture",
+      "destroy",
+      "detach",
+    ]) {
+      it(`restores the saved width and releases the resize session on ${cancellation}`, async () => {
+        const handle = minimapElement.resizeHandle;
+        const edge = minimapElement.getBoundingClientRect().left;
+        const layout = spyOn(lumine.workspace, "beginLayoutDrag").and.callThrough();
+        pointer(handle, "pointerdown", edge);
+        const dispose = spyOn(layout.calls.mostRecent().returnValue, "dispose").and.callThrough();
+        pointer(document, "pointermove", edge - 45);
+        await until(() => minimapElement.offsetWidth === 165, "the transient resize");
+
+        if (cancellation === "Escape")
+          document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+        else if (cancellation === "destroy") minimapElement.destroy();
+        else if (cancellation === "detach") minimapElement.detach();
+        else pointer(cancellation === "pointercancel" ? document : handle, cancellation, edge, 0);
+
+        expect(lumine.config.get("minimap.width")).toBe(120);
+        expect(handle.getAttribute("aria-valuenow")).toBe("120");
+        expect(minimapElement.widthResize).toBeNull();
+        expect(dispose).toHaveBeenCalledTimes(1);
+        pointer(document, "pointermove", edge - 80);
+        pointer(document, "pointerup", edge - 80, 0);
+        await settle();
+        expect(lumine.config.get("minimap.width")).toBe(120);
+      });
+    }
+
+    it("keeps the drag within positive width and the available editor area", async () => {
+      const handle = minimapElement.resizeHandle;
+      const edge = minimapElement.getBoundingClientRect().left;
+      pointer(handle, "pointerdown", edge);
+      pointer(document, "pointermove", edge + 10000);
+      await until(() => minimapElement.offsetWidth === 1, "the minimum drag width");
+      pointer(document, "pointermove", edge - 10000);
+      const maximum = editorElement.getBoundingClientRect().width - 40;
+      await until(() => minimapElement.offsetWidth === maximum, "the maximum drag width");
+      pointer(document, "pointerup", edge - 10000, 0);
+      expect(lumine.config.get("minimap.width")).toBe(maximum);
     });
   });
 

@@ -5,6 +5,8 @@ A preview of the full source code.
 ## Features
 
 - **Canvas rendering**: incremental redraws — only the row ranges that changed are repainted.
+- **Fixed width**: keeps a configurable width in pixels as panes, line lengths and wrapping change.
+- **Resizable edge**: drag the edge next to the editor to resize the minimap and save its width.
 - **Syntax highlighting**: token colors are resolved directly from the active theme via computed DOM styles and cached per scope, so the minimap matches the editor exactly.
 - **Scroll past end**: the minimap proportionally tracks the full editor scroll range, including the scroll-past-end zone.
 - **Marker layers**: git changes, linter messages, search hits and more are drawn over the code — enabled in the `marker` package, computed once and shared with the scrollbar strip through `marker.registry`.
